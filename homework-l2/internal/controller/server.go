@@ -10,8 +10,11 @@ import (
 	"time"
 )
 
-func Run() error {
-	srv := http.Server{}
+func Serve() error {
+	srv := http.Server{
+		Addr:    "8080",
+		Handler: Routes(),
+	}
 
 	shutdownError := make(chan error)
 
