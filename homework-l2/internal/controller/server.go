@@ -9,11 +9,15 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"app/config"
 )
 
 func Serve(handler http.Handler) error {
+	config := config.GetConfing()
+
 	srv := http.Server{
-		Addr:    ":8080",
+		Addr:    config.Host + ":" + config.Port,
 		Handler: handler,
 	}
 
@@ -35,7 +39,7 @@ func Serve(handler http.Handler) error {
 		shutdownError <- nil
 	}()
 
-	log.Println("Start server: http://localhost:8080")
+	log.Println("Start server: http://" + config.Host + ":" + config.Port)
 
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {

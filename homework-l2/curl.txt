@@ -6,3 +6,6 @@ curl -X POST \
         "login": "johndoe",
         "password": "12345"
      }'
+
+
+curl http://localhost:8080/user/1
