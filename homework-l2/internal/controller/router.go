@@ -3,18 +3,26 @@ package controller
 import (
 	"net/http"
 
+	"app/internal/controller/handler"
+	"app/internal/controller/middleware"
+	"app/internal/service"
+
 	"github.com/julienschmidt/httprouter"
 )
 
-func Routes() http.Handler {
+func Routes(service *service.Service) http.Handler {
 	router := httprouter.New()
 
-	router.HandlerFunc(http.MethodPost, "/user", nil)
-	router.HandlerFunc(http.MethodGet, "/user/:id", nil)
-	router.HandlerFunc(http.MethodPatch, "/user/:id", nil)
-	router.HandlerFunc(http.MethodDelete, "/user/:id", nil)
+	createUser := handler.NewCreateUserHandler(service.User)
+	getUser := handler.NewGetUserHandler(service.User)
 
-	return router
+	router.HandlerFunc(http.MethodPost, "/user", createUser.ServeHTTP)
+	router.HandlerFunc(http.MethodGet, "/user/:id", getUser.ServeHTTP)
+
+	router.NotFound = http.HandlerFunc(handler.NotFound)
+	router.MethodNotAllowed = http.HandlerFunc(handler.MethodNotAllowed)
+
+	middleware := middleware.RecoverPanic
+
+	return middleware(router)
 }
-
-type Controller struct{}

@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,10 +11,10 @@ import (
 	"time"
 )
 
-func Serve() error {
+func Serve(handler http.Handler) error {
 	srv := http.Server{
-		Addr:    "8080",
-		Handler: Routes(),
+		Addr:    ":8080",
+		Handler: handler,
 	}
 
 	shutdownError := make(chan error)
@@ -33,6 +34,8 @@ func Serve() error {
 
 		shutdownError <- nil
 	}()
+
+	log.Println("Start server: http://localhost:8080")
 
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {

@@ -1,18 +1,18 @@
 package repository
 
+import "app/internal/model"
+
 type IUserRepository interface {
-	Create()
-	Get()
-	Update()
-	Delete()
+	Create(model.User) error
+	Get(id int) (model.User, error)
 }
 
-type Repository struct {
+type Manager struct {
 	User IUserRepository
 }
 
-func NewRepository() *Repository {
-	return &Repository{
+func NewRepository() *Manager {
+	return &Manager{
 		User: NewUserRepository(),
 	}
 }
