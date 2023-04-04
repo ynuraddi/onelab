@@ -1,18 +1,27 @@
 package repository
 
-import "app/internal/model"
+import (
+	"context"
+
+	"app/internal/model"
+	"app/internal/repository/postgre"
+
+	"gorm.io/gorm"
+)
 
 type IUserRepository interface {
-	Create(model.User) error
-	Get(id int) (model.User, error)
+	Create(context.Context, model.User) error
+	Get(ctx context.Context, id int) (model.User, error)
+	Update(context.Context, model.User) error
+	Delete(context.Context, model.User) error
 }
 
 type Manager struct {
 	User IUserRepository
 }
 
-func NewRepository() *Manager {
+func NewRepository(db *gorm.DB) *Manager {
 	return &Manager{
-		User: NewUserRepository(),
+		User: postgre.NewUserRepository(db),
 	}
 }

@@ -11,15 +11,39 @@ import (
 	"time"
 
 	"app/config"
+	"app/internal/controller/handler"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-func Serve(handler http.Handler) error {
-	config := config.GetConfing()
+type Server struct {
+	config  *config.Config
+	handler *handler.Manager
+	App     *echo.Echo
+}
 
-	srv := http.Server{
-		Addr:    config.Host + ":" + config.Port,
-		Handler: handler,
+func NewServer(conf *config.Config, handler *handler.Manager) *Server {
+	return &Server{
+		config:  conf,
+		handler: handler,
 	}
+}
+
+func (s *Server) Serve() error {
+	s.App = echo.New()
+
+	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete},
+	}))
+
+	s.routes()
 
 	shutdownError := make(chan error)
 
@@ -31,7 +55,7 @@ func Serve(handler http.Handler) error {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		if err := srv.Shutdown(ctx); err != nil {
+		if err := s.App.Shutdown(ctx); err != nil {
 			shutdownError <- err
 			return
 		}
@@ -39,9 +63,9 @@ func Serve(handler http.Handler) error {
 		shutdownError <- nil
 	}()
 
-	log.Println("Start server: http://" + config.Host + ":" + config.Port)
+	log.Println("Start server: http://" + s.config.Host + ":" + s.config.Port)
 
-	err := srv.ListenAndServe()
+	err := s.App.Start(s.config.Host + ":" + s.config.Port)
 	if !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

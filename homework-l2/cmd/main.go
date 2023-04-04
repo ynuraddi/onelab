@@ -3,17 +3,26 @@ package main
 import (
 	"log"
 
+	"app/config"
 	"app/internal/controller"
+	"app/internal/controller/handler"
 	"app/internal/repository"
 	"app/internal/service"
+	"app/pkg/client/postgre"
 )
 
 func main() {
-	repo := repository.NewRepository()
+	config := config.GetConfing()
+
+	db := postgre.OpenDB(config)
+
+	repo := repository.NewRepository(db)
 
 	serv := service.NewService(repo)
 
-	ctrl := controller.Routes(serv)
+	handlers := handler.NewManager(config, serv)
 
-	log.Println(controller.Serve(ctrl))
+	server := controller.NewServer(config, handlers)
+
+	log.Fatalln(server.Serve())
 }

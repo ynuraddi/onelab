@@ -1,11 +1,11 @@
 curl -X POST \
-  http://localhost:8080/user \
+  http://localhost:8081/user \
   -H 'Content-Type: application/json' \
   -d '{
-        "fio": "John Doe",
+        "name": "John Doe",
         "login": "johndoe",
         "password": "12345"
      }'
 
 
-curl http://localhost:8080/user/1
+curl http://localhost:8081/user/1

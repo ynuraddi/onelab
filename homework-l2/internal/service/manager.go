@@ -1,13 +1,17 @@
 package service
 
 import (
+	"context"
+
 	"app/internal/model"
 	"app/internal/repository"
 )
 
 type IUserService interface {
-	Create(user model.User) error
-	Get(id int) (model.User, error)
+	Create(context.Context, model.User) error
+	Get(ctx context.Context, id int) (model.User, error)
+	Update(context.Context, model.User) error
+	Delete(context.Context, model.User) error
 }
 
 type Service struct {

@@ -1,0 +1,6 @@
+create table if not exists users(
+   user_id serial primary key,
+   name varchar (50) unique not null,
+   login varchar (50) unique not null,
+   password varchar (72) not null
+);

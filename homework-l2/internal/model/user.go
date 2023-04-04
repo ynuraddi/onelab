@@ -1,16 +1,12 @@
 package model
 
-import "errors"
-
 type User struct {
-	ID       int    `json:"id"`
-	FIO      string `json:"fio"`
-	Login    string `json:"login"`
-	Password string `json:"-"`
+	ID       int    `json:"id" param:"id" gorm:"column:user_id"`
+	Name     string `json:"name" gorm:"column:name"`
+	Login    string `json:"login" gorm:"column:login"`
+	Password string `json:"-" gorm:"column:password"`
 }
 
-var (
-	ErrUserNotExists       = errors.New("User does not exist")
-	ErrUserIsAlreadyExists = errors.New("User already exists")
-	ErrUserOverflow        = errors.New("User storage is overflow")
-)
+func (User) TableName() string {
+	return "users"
+}
