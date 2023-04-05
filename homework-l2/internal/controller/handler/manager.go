@@ -35,6 +35,11 @@ func (h *Manager) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateUser): bad request"})
 	}
 
+	// TODO создать структуру для валидации нужный параметров
+	if err := c.Validate(user); err != nil {
+		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateUser): validation failed || " + err.Error()})
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -104,7 +109,7 @@ func (h *Manager) DeleteUser(c echo.Context) error {
 	err := h.s.User.Update(ctx, user)
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrMissingWhereClause):
-		return c.JSON(http.StatusNotFound, envelope{"info": "handler(DeleteUser): user is not exist\n" + err.Error()})
+		return c.JSON(http.StatusNotFound, envelope{"info": "handler(DeleteUser): user is not exist || " + err.Error()})
 	case err != nil:
 		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(DeleteUser): " + err.Error()})
 	default:

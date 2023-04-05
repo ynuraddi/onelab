@@ -18,27 +18,29 @@ import (
 )
 
 type Server struct {
-	config  *config.Config
-	handler *handler.Manager
-	App     *echo.Echo
+	config    *config.Config
+	handler   *handler.Manager
+	validator echo.Validator
+	App       *echo.Echo
 }
 
-func NewServer(conf *config.Config, handler *handler.Manager) *Server {
+func NewServer(conf *config.Config, handler *handler.Manager, validator echo.Validator) *Server {
 	return &Server{
-		config:  conf,
-		handler: handler,
+		config:    conf,
+		handler:   handler,
+		validator: validator,
 	}
 }
 
 func (s *Server) Serve() error {
 	s.App = echo.New()
 
-	e := echo.New()
+	s.App.Validator = s.validator
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	s.App.Use(middleware.Logger())
+	s.App.Use(middleware.Recover())
 
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	s.App.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete},
 	}))
@@ -63,9 +65,9 @@ func (s *Server) Serve() error {
 		shutdownError <- nil
 	}()
 
-	log.Println("Start server: http://" + s.config.Host + ":" + s.config.Port)
+	log.Println("Start server: http://" + s.config.HTTP.Host + ":" + s.config.HTTP.Port)
 
-	err := s.App.Start(s.config.Host + ":" + s.config.Port)
+	err := s.App.Start(s.config.HTTP.Host + ":" + s.config.HTTP.Port)
 	if !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

@@ -8,8 +8,17 @@ import (
 )
 
 type Config struct {
-	Host string `yaml:"host" env:"HOST" env-default:"localhost"`
-	Port string `yaml:"port" env:"PORT" env-default:"8080"`
+	HTTP struct {
+		Host string `env:"HOST" env-default:"localhost"`
+		Port string `env:"PORT" env-default:"8080"`
+	}
+	Database struct {
+		Host   string `env:"DB_HOST" env-default:"localhost"`
+		Port   string `env:"DB_PORT" env-default:"5432"`
+		User   string `env:"DB_USER" env-default:"onelab"`
+		Pass   string `env:"DB_PASSWORD" env-default:"onelab"`
+		DBName string `env:"DB_DATABASE" env-default:"onelab"`
+	}
 }
 
 var (

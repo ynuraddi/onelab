@@ -1,6 +1,7 @@
 package postgre
 
 import (
+	"fmt"
 	"log"
 
 	"app/config"
@@ -11,9 +12,10 @@ import (
 
 func OpenDB(conf *config.Config) *gorm.DB {
 	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN:                  "user=onelab password=onelab dbname=onelab host=localhost port=5432 sslmode=disable",
+		DSN: fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
+			conf.Database.User, conf.Database.Pass, conf.Database.DBName, conf.Database.Host, conf.Database.Port),
 		PreferSimpleProtocol: true,
-	}), &gorm.Config{})
+	}))
 	if err != nil {
 		log.Fatalln(err)
 	}
