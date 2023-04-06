@@ -16,6 +16,8 @@ type IUserRepository interface {
 	Delete(ctx context.Context, id int) error
 }
 
+type IBookReoisitory interface{}
+
 type Manager struct {
 	User IUserRepository
 }
