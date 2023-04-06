@@ -12,6 +12,9 @@ import (
 	"app/pkg/validator"
 )
 
+// TODO настроить линтер
+// https://olegk.dev/go-linters-configuration-the-right-version
+
 func main() {
 	config := config.GetConfing()
 

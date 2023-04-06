@@ -16,7 +16,19 @@ type IUserRepository interface {
 	Delete(ctx context.Context, id int) error
 }
 
-type IBookReoisitory interface{}
+// TODO
+type IBookReoisitory interface {
+	Create(context.Context, model.Book) error
+	Get(ctx context.Context, id int) (model.Book, error)
+}
+
+// TODO
+type IBookBorrowHistory interface {
+	Create(context.Context)
+	Get(context.Context)
+	ListDebtors(context.Context)
+	UsersBookCountLastMonth(context.Context)
+}
 
 type Manager struct {
 	User IUserRepository
