@@ -13,7 +13,7 @@ type IUserRepository interface {
 	Create(context.Context, model.User) error
 	Get(ctx context.Context, id int) (model.User, error)
 	Update(context.Context, model.User) error
-	Delete(context.Context, model.User) error
+	Delete(ctx context.Context, id int) error
 }
 
 type Manager struct {

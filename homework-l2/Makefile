@@ -2,6 +2,10 @@ migration_up: confirm
 	@echo 'Running up migrations...'
 	migrate -path=./internal/repository/postgre/migrations -database=postgres://onelab:onelab@localhost:5432/onelab?sslmode=disable up
 
+migration_version:
+	@echo 'Running up migrations...'
+	migrate -path=./internal/repository/postgre/migrations -database=postgres://onelab:onelab@localhost:5432/onelab?sslmode=disable version
+
 run/db:
 	@echo 'Running up container with database...'
 	docker run --rm --name psg -e POSTGRES_USER=onelab -e POSTGRES_PASSWORD=onelab -e POSTGRES_DATABASE=onelab -d -p 5432:5432 postgres

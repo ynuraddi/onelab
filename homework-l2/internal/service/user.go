@@ -64,8 +64,12 @@ func (s *userService) Update(ctx context.Context, u model.User) error {
 	return nil
 }
 
-func (s *userService) Delete(ctx context.Context, u model.User) error {
-	return s.repo.Delete(ctx, u)
+func (s *userService) Delete(ctx context.Context, id int) error {
+	if err := s.repo.Delete(ctx, id); err != nil {
+		return fmt.Errorf("userService(Delete): %w", err)
+	}
+
+	return nil
 }
 
 func (s *userService) hashPassword(pass string) (string, error) {

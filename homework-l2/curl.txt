@@ -1,5 +1,6 @@
+//CREATE
 curl -X POST \
-  http://localhost:8081/user \
+  http://localhost:8080/user \
   -H 'Content-Type: application/json' \
   -d '{
         "name": "John Doe",
@@ -7,5 +8,24 @@ curl -X POST \
         "password": "12345"
      }'
 
+//GET
+curl http://localhost:8080/user/1
 
-curl http://localhost:8081/user/1
+//UPDATE
+curl -X PATCH \
+  http://localhost:8080/user/1 \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "Jojo Doe",
+        "login": ""
+     }'
+
+//DELETE
+curl -X DELETE \
+  http://localhost:8080/user/1 \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "John Doe",
+        "login": "johndoe",
+        "password": "12345"
+     }'

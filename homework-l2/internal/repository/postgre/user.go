@@ -20,8 +20,6 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 }
 
 func (r *userRepository) Create(ctx context.Context, u model.User) error {
-	fmt.Println(u, len(u.Password))
-
 	result := r.db.WithContext(ctx).Create(&u)
 	if result.Error != nil {
 		return fmt.Errorf("userRepository(Create): %w", result.Error)
@@ -40,7 +38,7 @@ func (r *userRepository) Get(ctx context.Context, id int) (u model.User, err err
 }
 
 func (r *userRepository) Update(ctx context.Context, u model.User) error {
-	result := r.db.WithContext(ctx).Where("id = ?", u.ID).Updates(model.User{Name: u.Name, Login: u.Login})
+	result := r.db.WithContext(ctx).Where("user_id = ?", u.ID).Updates(model.User{Name: u.Name, Login: u.Login})
 	if result.Error != nil {
 		return fmt.Errorf("userRepository(Update): %w", result.Error)
 	}
@@ -48,8 +46,8 @@ func (r *userRepository) Update(ctx context.Context, u model.User) error {
 	return nil
 }
 
-func (r *userRepository) Delete(ctx context.Context, u model.User) error {
-	result := r.db.WithContext(ctx).Delete(&u)
+func (r *userRepository) Delete(ctx context.Context, id int) error {
+	result := r.db.WithContext(ctx).Delete(model.User{}, id)
 	if result.Error != nil {
 		return fmt.Errorf("userRepository(Delete): %w", result.Error)
 	}
