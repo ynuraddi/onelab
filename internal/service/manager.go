@@ -14,12 +14,28 @@ type IUserService interface {
 	Delete(context.Context, int) error
 }
 
+type IBookService interface {
+	Create(context.Context, model.Book) error
+	Get(ctx context.Context, id int) (model.Book, error)
+}
+
+type IBookBorrowHistory interface {
+	Create(context.Context, model.BookBorrowHistory) error
+	Get(ctx context.Context, id int) (model.BookBorrowHistory, error)
+	ListDebtors(context.Context) ([]*model.Debtor, error)
+	BookRentalForMonth(ctx context.Context, month, year int) ([]*model.UserRentalBooks, error)
+}
+
 type Service struct {
-	User IUserService
+	User       IUserService
+	Book       IBookService
+	BookBorrow IBookBorrowHistory
 }
 
 func NewService(repo *repository.Manager) *Service {
 	return &Service{
-		User: NewUserService(repo.User),
+		User:       NewUserService(repo.User),
+		Book:       NewBookService(repo.Book),
+		BookBorrow: NewBookBorrowHistoryService(repo.BookBorrowHistory),
 	}
 }

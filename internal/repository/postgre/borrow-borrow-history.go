@@ -44,7 +44,7 @@ func (r *bookBorrowHistoryRepository) ListDebtors(ctx context.Context) (dbts []*
 }
 
 func (r *bookBorrowHistoryRepository) BookRentalForMonth(ctx context.Context, month, year int) (urb []*model.UserRentalBooks, err error) {
-	if err = r.db.WithContext(ctx).Table("book_borrowing_history").Joins("left join users using(user_id)").Select("user_id, name, count(*)").Group("user_id, name").Find(&urb).Error; err != nil {
+	if err = r.db.WithContext(ctx).Table("book_borrowing_history").Joins("left join users using(user_id)").Select("user_id, name, count(*)").Where("month(borrow_date) = ?", month).Group("user_id, name").Find(&urb).Error; err != nil {
 		return urb, fmt.Errorf("bookBorrowHistoryRepo(BookRentalForMonth): %w", err)
 	}
 
