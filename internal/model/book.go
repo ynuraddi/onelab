@@ -1,9 +1,9 @@
 package model
 
 type Book struct {
-	ID     int    `json:"id"     gorm:"column:book_id"  `
-	Name   string `json:"name"   gorm:"column:name"     `
-	Author string `json:"author" gorm:"column:author"    `
+	ID     int    `json:"book_id"     gorm:"column:book_id"  `
+	Title  string `json:"book_title"   gorm:"column:title"     `
+	Author string `json:"book_author" gorm:"column:author"    `
 }
 
 func (Book) TableName() string {

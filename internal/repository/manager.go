@@ -24,14 +24,16 @@ type IBookReoisitory interface {
 
 // TODO
 type IBookBorrowHistory interface {
-	Create(context.Context)
-	Get(context.Context)
-	ListDebtors(context.Context)
-	UsersBookCountLastMonth(context.Context)
+	Create(ctx context.Context, uid, bid int) error
+	Get(ctx context.Context, id int)
+	ListDebtors(context.Context) ([]*model.Debtor, error)
+	BookRentalForMonth(ctx context.Context, month, year int) ([]*model.UserRentalBooks, error)
 }
 
 type Manager struct {
-	User IUserRepository
+	User              IUserRepository
+	Book              IBookReoisitory
+	BookBorrowHistory IBookBorrowHistory
 }
 
 func NewRepository(db *gorm.DB) *Manager {
