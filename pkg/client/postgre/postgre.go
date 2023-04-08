@@ -9,7 +9,8 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
+// в pkg хранится то что другие могут использовать когда импортят твой сервис.
+// это должно лежать в repository/postgre/postgre.go
 func OpenDB(conf *config.Config) *gorm.DB {
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",

@@ -16,7 +16,8 @@ import (
 // https://olegk.dev/go-linters-configuration-the-right-version
 
 func main() {
-	config := config.GetConfing()
+	// main должен вызывать фукнкцию гun() которая возв ошибку.
+	config := config.GetConfing() // коллизия имен 
 
 	// logger := logger.NewLogger(config)
 

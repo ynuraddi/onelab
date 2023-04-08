@@ -1,5 +1,6 @@
 package controller
-
+// мы не называем папку "Контроллер"
+// А если и используешь то она должна лежать transport/http/router.go
 func (s *Server) routes() {
 	s.App.POST("/user", s.handler.CreateUser)
 	s.App.GET("/user/:id", s.handler.GetUser)
