@@ -17,6 +17,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// Контроллер - это реализация слоя транспорта поэтому это должно быть transport/http/server.go
+
 type Server struct {
 	config    *config.Config
 	handler   *handler.Manager

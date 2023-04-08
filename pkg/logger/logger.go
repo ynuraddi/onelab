@@ -8,7 +8,7 @@ import (
 
 	"go.uber.org/zap"
 )
-
+// это не нужно выносить в пкг 
 func NewLogger(config *config.Config) *zap.Logger {
 	rawJSON := []byte(`{
 		"level": "debug",
