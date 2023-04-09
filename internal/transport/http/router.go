@@ -1,6 +1,6 @@
-package controller
+package transport
 
-func (s *Server) routes() {
+func (s *Server) setupRoutes() {
 	s.App.POST("/user", s.handler.CreateUser)
 	s.App.GET("/user/:id", s.handler.GetUser)
 	s.App.PATCH("/user/:id", s.handler.UpdateUser)

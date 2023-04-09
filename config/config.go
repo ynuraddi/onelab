@@ -28,7 +28,9 @@ var (
 
 func GetConfing() *Config {
 	once.Do(func() {
-		cleanenv.ReadConfig(".env", &config)
+		if err := cleanenv.ReadConfig(".env", &config); err != nil {
+			log.Fatalln(err)
+		}
 		log.Println("logs readed")
 	})
 

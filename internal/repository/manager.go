@@ -3,10 +3,9 @@ package repository
 import (
 	"context"
 
+	"app/config"
 	"app/internal/model"
 	"app/internal/repository/postgre"
-
-	"gorm.io/gorm"
 )
 
 type IUserRepository interface {
@@ -36,7 +35,9 @@ type Manager struct {
 	BookBorrowHistory IBookBorrowHistoryRepository
 }
 
-func NewRepository(db *gorm.DB) *Manager {
+func NewRepository(conf *config.Config) *Manager {
+	db := postgre.OpenDB(conf)
+
 	return &Manager{
 		User:              postgre.NewUserRepository(db),
 		Book:              postgre.NewBookRepository(db),
