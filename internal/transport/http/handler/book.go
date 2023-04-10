@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"time"
 
@@ -14,12 +15,12 @@ import (
 
 func (h *Manager) CreateBook(c echo.Context) error {
 	input := struct {
-		Title  string `json:"title"     validate:"required,min=5"`
-		Author string `json:"author"    validate:"required,min=5"`
+		Title  string `json:"title"     validate:"required"`
+		Author string `json:"author"    validate:"required"`
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateUser): bad request"})
+		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateBook): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
@@ -44,7 +45,7 @@ func (h *Manager) CreateBook(c echo.Context) error {
 	case err != nil:
 		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(CreateBook): " + err.Error()})
 	default:
-		return c.JSON(http.StatusCreated, envelope{"info": "user created"})
+		return c.JSON(http.StatusCreated, envelope{"info": "book created"})
 	}
 }
 
@@ -54,7 +55,8 @@ func (h *Manager) GetBook(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(GetUser): bad request"})
+		log.Println(err)
+		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(GetBook): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {

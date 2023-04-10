@@ -6,11 +6,11 @@ func (s *Server) setupRoutes() {
 	s.App.PATCH("/user/:id", s.handler.UpdateUser)
 	s.App.DELETE("/user/:id", s.handler.DeleteUser)
 
-	s.App.POST("/books", nil)
-	s.App.GET("/book:id", nil)
+	s.App.POST("/book", s.handler.CreateBook)
+	s.App.GET("/book/:id", s.handler.GetBook)
 
-	s.App.POST("/borrow-history", nil)
-	s.App.GET("/borrow-history/:id", nil)
-	s.App.GET("/borrow-history/debtors", nil)
-	s.App.GET("/borrow-history/stat-month", nil)
+	s.App.POST("/borrow-history", s.handler.CreateBorrowHistory)
+	// s.App.GET("/borrow-history/:id", nil)
+	s.App.GET("/borrow-history/debtors", s.handler.ListDebtorsBorrowHistory)
+	s.App.GET("/borrow-history/stat-month", s.handler.StatMonthBorrowHistory)
 }

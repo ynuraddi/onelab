@@ -20,7 +20,7 @@ func NewBookBorrowHistoryRepository(db *gorm.DB) *bookBorrowHistoryRepository {
 }
 
 func (r *bookBorrowHistoryRepository) Create(ctx context.Context, b model.BookBorrowHistory) error {
-	if err := r.db.WithContext(ctx).Create(&b).Error; err != nil {
+	if err := r.db.WithContext(ctx).Select("book_id", "user_id", "borrow_date").Create(&b).Error; err != nil {
 		return fmt.Errorf("bookBorrowHistoryRepo(Create): %w", err)
 	}
 
@@ -36,7 +36,7 @@ func (r *bookBorrowHistoryRepository) Get(ctx context.Context, id int) (b model.
 }
 
 func (r *bookBorrowHistoryRepository) ListDebtors(ctx context.Context) (dbts []*model.Debtor, err error) {
-	if err = r.db.WithContext(ctx).Table("book_borrowing_history").Select("*").Joins("left join users using(user_id) left join books using(book_id)").Where("return_date = null").Find(&dbts).Error; err != nil {
+	if err = r.db.WithContext(ctx).Table("book_borrowing_history").Joins("left join users using(user_id)").Joins("left join books using(book_id)").Select("*").Where("return_date is null").Find(&dbts).Error; err != nil {
 		return dbts, fmt.Errorf("bookBorrowHistoryRepo(ListDebtors): %w", err)
 	}
 
@@ -44,7 +44,7 @@ func (r *bookBorrowHistoryRepository) ListDebtors(ctx context.Context) (dbts []*
 }
 
 func (r *bookBorrowHistoryRepository) BookRentalForMonth(ctx context.Context, month, year int) (urb []*model.UserRentalBooks, err error) {
-	if err = r.db.WithContext(ctx).Table("book_borrowing_history").Joins("left join users using(user_id)").Select("user_id, name, count(*)").Where("month(borrow_date) = ?", month).Group("user_id, name").Find(&urb).Error; err != nil {
+	if err = r.db.WithContext(ctx).Table("book_borrowing_history").Joins("left join users using(user_id)").Select("user_id, name, count(borrow_date) as count").Where("extract(month from borrow_date) = ?", month).Group("user_id, name").Find(&urb).Error; err != nil {
 		return urb, fmt.Errorf("bookBorrowHistoryRepo(BookRentalForMonth): %w", err)
 	}
 

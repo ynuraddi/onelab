@@ -31,7 +31,7 @@ func GetConfing() *Config {
 		if err := cleanenv.ReadConfig(".env", &config); err != nil {
 			log.Fatalln(err)
 		}
-		log.Println("logs readed")
+		log.Println("configs readed")
 	})
 
 	return &config
