@@ -19,9 +19,21 @@ func NewBookBorrowHistoryRepository(db *gorm.DB) *bookBorrowHistoryRepository {
 	}
 }
 
-func (r *bookBorrowHistoryRepository) Create(ctx context.Context, b model.BookBorrowHistory) error {
+func (r *bookBorrowHistoryRepository) BorrowBook(ctx context.Context, b model.BookBorrowHistory) error {
 	if err := r.db.WithContext(ctx).Select("book_id", "user_id", "borrow_date").Create(&b).Error; err != nil {
 		return fmt.Errorf("bookBorrowHistoryRepo(Create): %w", err)
+	}
+
+	return nil
+}
+
+func (r *bookBorrowHistoryRepository) ReturnBook(ctx context.Context, b model.BookBorrowHistory) error {
+	if err := r.db.WithContext(ctx).Table("book_borrowing_history").Where(`user_id = ? and book_id = ? and return_date is null 
+																		   and ctid in (select ctid 
+																		   from book_borrowing_history 
+																		   where user_id = ? and book_id = ? and return_date is null 
+																		   limit 1)`, b.UserID, b.BookID, b.UserID, b.BookID).Update("return_date", b.ReturnDate).Error; err != nil {
+		return fmt.Errorf("bookBorrowHistoryRepo(ReturnBook): %w", err)
 	}
 
 	return nil

@@ -23,7 +23,8 @@ type IBookRepository interface {
 
 // TODO
 type IBookBorrowHistoryRepository interface {
-	Create(context.Context, model.BookBorrowHistory) error
+	BorrowBook(context.Context, model.BookBorrowHistory) error
+	ReturnBook(context.Context, model.BookBorrowHistory) error
 	Get(ctx context.Context, id int) (model.BookBorrowHistory, error)
 	ListDebtors(context.Context) ([]*model.Debtor, error)
 	BookRentalForMonth(ctx context.Context, month, year int) ([]*model.UserRentalBooks, error)

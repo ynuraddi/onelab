@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"app/internal/model"
 	"app/internal/repository"
@@ -17,8 +18,17 @@ func NewBookBorrowHistoryService(repo repository.IBookBorrowHistoryRepository) *
 	}
 }
 
-func (s *bookBorrowHistoryService) Create(ctx context.Context, b model.BookBorrowHistory) error {
-	return s.repo.Create(ctx, b)
+func (s *bookBorrowHistoryService) BorrowBook(ctx context.Context, b model.BookBorrowHistory) error {
+	return s.repo.BorrowBook(ctx, b)
+}
+
+func (s *bookBorrowHistoryService) ReturnBook(ctx context.Context, b model.BookBorrowHistory) error {
+	var t time.Time
+	if b.ReturnDate == t {
+		b.ReturnDate = time.Now()
+	}
+
+	return s.repo.ReturnBook(ctx, b)
 }
 
 func (s *bookBorrowHistoryService) Get(ctx context.Context, id int) (model.BookBorrowHistory, error) {
