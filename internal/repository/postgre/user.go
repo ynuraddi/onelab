@@ -54,3 +54,11 @@ func (r *userRepository) Delete(ctx context.Context, id int) error {
 
 	return nil
 }
+
+func (r *userRepository) GetByUsername(ctx context.Context, username string) (u model.User, err error) {
+	if err = r.db.WithContext(ctx).Table("users").Where("user_name = ?", username).First(&u).Error; err != nil {
+		return u, fmt.Errorf("userRepository(GetByUsername): %w", err)
+	}
+
+	return u, err
+}

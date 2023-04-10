@@ -80,3 +80,20 @@ func (s *userService) hashPassword(pass string) (string, error) {
 
 	return string(hash), nil
 }
+
+func (s *userService) GetByUsername(ctx context.Context, username string) (model.User, error) {
+	return model.User{}, nil
+}
+
+func (s *userService) Auth(ctx context.Context, user model.User) error {
+	dbUser, err := s.repo.GetByUsername(ctx, user.Name)
+	if err != nil {
+		return fmt.Errorf("userService(Auth): %w", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)); err != nil {
+		return fmt.Errorf("userService(Auth): %w", err)
+	}
+
+	return nil
+}

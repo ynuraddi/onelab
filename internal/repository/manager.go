@@ -11,6 +11,7 @@ import (
 type IUserRepository interface {
 	Create(context.Context, model.User) error
 	Get(ctx context.Context, id int) (model.User, error)
+	GetByUsername(context.Context, string) (model.User, error)
 	Update(context.Context, model.User) error
 	Delete(ctx context.Context, id int) error
 }
