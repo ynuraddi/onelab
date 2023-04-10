@@ -17,6 +17,7 @@ import (
 // TODO настроить линтер
 // https://olegk.dev/go-linters-configuration-the-right-version
 
+// TODO return book repo, serv, handl
 func main() {
 	log.Fatalf("Service shutdown: %s\n", run())
 }

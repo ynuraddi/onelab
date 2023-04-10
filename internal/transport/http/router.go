@@ -11,6 +11,7 @@ func (s *Server) setupRoutes() {
 
 	s.App.POST("/borrow-history", s.handler.CreateBorrowHistory)
 	// s.App.GET("/borrow-history/:id", nil)
+	s.App.PATCH("/borrow-history/:id", nil) // returning
 	s.App.GET("/borrow-history/debtors", s.handler.ListDebtorsBorrowHistory)
 	s.App.GET("/borrow-history/stat-month", s.handler.StatMonthBorrowHistory)
 }

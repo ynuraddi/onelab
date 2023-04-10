@@ -1,5 +1,5 @@
 create table if not exists book_borrowing_history (
-    borrowing_id serial primary key,
+    borrow_id serial primary key,
     book_id int not null,
     user_id int not null,
     borrow_date timestamp default now() not null,
