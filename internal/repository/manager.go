@@ -16,13 +16,11 @@ type IUserRepository interface {
 	Delete(ctx context.Context, id int) error
 }
 
-// TODO
 type IBookRepository interface {
 	Create(context.Context, model.Book) error
 	Get(ctx context.Context, id int) (model.Book, error)
 }
 
-// TODO
 type IBookBorrowHistoryRepository interface {
 	BorrowBook(context.Context, model.BookBorrowHistory) error
 	ReturnBook(context.Context, model.BookBorrowHistory) error

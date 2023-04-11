@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"app/config"
 	"app/internal/model"
 	"app/internal/repository"
 )
@@ -29,15 +30,23 @@ type IBookBorrowHistory interface {
 	BookRentalForMonth(ctx context.Context, month, year int) ([]*model.UserRentalBooks, error)
 }
 
+type IAuthService interface {
+	GenerateToken(username string) (string, error)
+}
+
 type Service struct {
+	JWT        IAuthService
 	User       IUserService
 	Book       IBookService
 	BookBorrow IBookBorrowHistory
 }
 
-func NewService(repo *repository.Manager) *Service {
+func NewService(repo *repository.Manager, conf *config.Config) *Service {
+	user := NewUserService(repo.User)
+
 	return &Service{
-		User:       NewUserService(repo.User),
+		JWT:        NewJWT(conf, user),
+		User:       user,
 		Book:       NewBookService(repo.Book),
 		BookBorrow: NewBookBorrowHistoryService(repo.BookBorrowHistory),
 	}

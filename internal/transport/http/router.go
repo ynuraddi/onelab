@@ -1,8 +1,26 @@
 package transport
 
+import (
+	"app/internal/model"
+
+	"github.com/golang-jwt/jwt/v4"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
+)
+
 func (s *Server) setupRoutes() {
+	auth := echojwt.WithConfig(echojwt.Config{
+		ContextKey: "user",
+		SigningKey: []byte(s.config.HTTP.JWTKey),
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(model.JWTClaims)
+		},
+	})
+
+	s.App.POST("/login", s.handler.LoginUser)
+
 	s.App.POST("/user", s.handler.CreateUser)
-	s.App.GET("/user/:id", s.handler.GetUser)
+	s.App.GET("/user/:id", s.handler.GetUser, auth)
 	s.App.PATCH("/user/:id", s.handler.UpdateUser)
 	s.App.DELETE("/user/:id", s.handler.DeleteUser)
 

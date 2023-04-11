@@ -12,6 +12,43 @@ import (
 	"gorm.io/gorm"
 )
 
+func (h *Manager) LoginUser(c echo.Context) error {
+	input := struct {
+		Username string `json:"name"    validate:"required,min=5"`
+		Password string `json:"password" validate:"required,min=5"`
+	}{}
+
+	if err := c.Bind(&input); err != nil {
+		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateUser): bad request"})
+	}
+
+	if err := c.Validate(input); err != nil {
+		return c.JSON(http.StatusBadRequest, envelope{
+			"error":         "handler(LoginUser): validation failed",
+			"errorValidate": err.Error(),
+		})
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
+	defer cancel()
+
+	if err := h.s.User.Auth(ctx, model.User{
+		Name:     input.Username,
+		Password: input.Password,
+	}); err != nil {
+		return c.JSON(http.StatusUnauthorized, envelope{"error": "handler(LoginUser): " + err.Error()})
+	}
+
+	token, err := h.s.JWT.GenerateToken(input.Username)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(LoginUser): generate token failed"})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"token": token,
+	})
+}
+
 func (h *Manager) CreateUser(c echo.Context) error {
 	input := struct {
 		Name     string `json:"name"     validate:"required,min=5"`

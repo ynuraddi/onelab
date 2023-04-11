@@ -11,7 +11,7 @@ import (
 	"app/internal/service"
 	transport "app/internal/transport/http"
 	"app/internal/transport/http/handler"
-	"app/validator"
+	"app/internal/validator"
 )
 
 // TODO настроить линтер
@@ -34,7 +34,7 @@ func run() error {
 
 	repo := repository.NewRepository(config)
 
-	serv := service.NewService(repo)
+	serv := service.NewService(repo, config)
 
 	validator := validator.NewValidator()
 

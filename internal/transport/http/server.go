@@ -10,7 +10,6 @@ import (
 	"app/config"
 	"app/internal/transport/http/handler"
 
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -65,9 +64,6 @@ func (s *Server) BuildEngine() *echo.Echo {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete},
-	}))
-	e.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte("secret"),
 	}))
 
 	return e
