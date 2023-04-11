@@ -1,0 +1,66 @@
+#create user
+curl --location --request POST 'http://localhost:8080/user' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "John Doe",
+    "login": "johndoe",
+    "password": "12345"
+}'
+
+#login
+curl --location --request POST 'http://localhost:8080/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "John Doe",
+    "password": "12345"
+}'
+
+#get user
+curl --location --request GET 'http://localhost:8080/user/1' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJleHAiOjE2ODE1MDY4OTZ9.WuAXnZiueY2bLMgbJvDjo8Clm3sJdwEiT-VrxpkTS14'
+
+#update user
+curl --location --request PATCH 'http://localhost:8080/user/1' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Jojo Doe",
+    "login": ""
+}'
+
+#create book
+curl --location --request POST 'http://localhost:8080/book' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "title":"Alias",
+    "author":"Bibas"
+}'
+
+#get book
+curl --location --request GET 'http://localhost:8080/book/3'
+
+#create entry of borrow book
+curl --location --request POST 'http://localhost:8080/borrow-history' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "book_id": 3,
+    "user_id": 1,
+    "borrow_date": "2023-04-10T12:00:00Z"
+}'
+
+#return book
+curl --location --request PATCH 'http://localhost:8080/borrow-history/debtors' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "book_id": 3,
+    "user_id": 1
+}'
+
+#list of devtors
+curl --location --request GET 'http://localhost:8080/borrow-history/debtors'
+
+#stat of users per month
+curl --location --request GET 'http://localhost:8080/borrow-history/stat-month' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "month": 4
+}'
