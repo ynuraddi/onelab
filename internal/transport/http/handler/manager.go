@@ -10,7 +10,9 @@ type Manager struct {
 	s    *service.Service
 }
 
-type envelope map[string]interface{}
+type Envelope struct {
+	Msg string `json:"message"`
+}
 
 func NewManager(conf *config.Config, service *service.Service) *Manager {
 	return &Manager{

@@ -6,9 +6,15 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+
+	_ "app/docs"
+
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 func (s *Server) setupRoutes() {
+	s.App.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	auth := echojwt.WithConfig(echojwt.Config{
 		ContextKey: "user",
 		SigningKey: []byte(s.config.HTTP.JWTKey),

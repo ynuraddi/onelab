@@ -12,20 +12,29 @@ import (
 	"gorm.io/gorm"
 )
 
+// Login godoc
+//
+//	@Summary		Login
+//	@Tags			auth
+//	@Description	login
+//	@Accept			json
+//	@Produce		json
+//	@Param			input	body	model.LoginUserRq	true	"user login request"
+//	@Success		200		{json}	handler.envelope
+//	@Failure		400		{json}	handler.envelope
+//	@Failure		404		{json}	handler.envelope
+//	@Failure		500		{json}	handler.envelope
+//	@Router			/login [post]
 func (h *Manager) LoginUser(c echo.Context) error {
-	input := struct {
-		Username string `json:"name"    validate:"required,min=5"`
-		Password string `json:"password" validate:"required,min=5"`
-	}{}
+	var input model.LoginUserRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateUser): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(CreateUser): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(LoginUser): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(LoginUser): validation failed " + err.Error(),
 		})
 	}
 
@@ -33,15 +42,15 @@ func (h *Manager) LoginUser(c echo.Context) error {
 	defer cancel()
 
 	if err := h.s.User.Auth(ctx, model.User{
-		Name:     input.Username,
+		Name:     input.Name,
 		Password: input.Password,
 	}); err != nil {
-		return c.JSON(http.StatusUnauthorized, envelope{"error": "handler(LoginUser): " + err.Error()})
+		return c.JSON(http.StatusUnauthorized, Envelope{Msg: "handler(LoginUser): " + err.Error()})
 	}
 
-	token, err := h.s.JWT.GenerateToken(input.Username)
+	token, err := h.s.JWT.GenerateToken(input.Name)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(LoginUser): generate token failed"})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(LoginUser): generate token failed"})
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
@@ -50,20 +59,15 @@ func (h *Manager) LoginUser(c echo.Context) error {
 }
 
 func (h *Manager) CreateUser(c echo.Context) error {
-	input := struct {
-		Name     string `json:"name"     validate:"required,min=5"`
-		Login    string `json:"login"    validate:"required,min=5"`
-		Password string `json:"password" validate:"required,min=5"`
-	}{}
+	var input model.UserCreateRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(CreateUser): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(CreateUser): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(CreateUser): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(CreateUser): validation failed " + err.Error(),
 		})
 	}
 
@@ -76,16 +80,14 @@ func (h *Manager) CreateUser(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Я вот не знаю где и как лучше обрабатывать ошибки и как их лучше стандартизировать, не довело видеть хороших примеров, у меня не правильно мне кажеться сделано, хотелось бы знать как лучше.
-
 	err := h.s.User.Create(ctx, user)
 	switch {
 	case errors.Is(err, gorm.ErrDuplicatedKey):
-		return c.JSON(http.StatusUnprocessableEntity, envelope{"error": "handler(CreateUser): user already exist || " + err.Error()})
+		return c.JSON(http.StatusUnprocessableEntity, Envelope{Msg: "handler(CreateUser): user already exist || " + err.Error()})
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(CreateUser): " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(CreateUser): " + err.Error()})
 	default:
-		return c.JSON(http.StatusCreated, envelope{"info": "user created"})
+		return c.JSON(http.StatusCreated, Envelope{Msg: "user created"})
 	}
 }
 
@@ -95,13 +97,12 @@ func (h *Manager) GetUser(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(GetUser): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(GetUser): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(GetUser): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(GetUser): validation failed " + err.Error(),
 		})
 	}
 
@@ -111,9 +112,9 @@ func (h *Manager) GetUser(c echo.Context) error {
 	user, err := h.s.User.Get(ctx, input.ID)
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		return c.JSON(http.StatusNotFound, envelope{"info": "handler(GetUser): user is not exist || " + err.Error()})
+		return c.JSON(http.StatusNotFound, Envelope{Msg: "handler(GetUser): user is not exist || " + err.Error()})
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(GetUser): " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(GetUser): " + err.Error()})
 	default:
 		return c.JSON(http.StatusFound, user)
 	}
@@ -127,13 +128,12 @@ func (h *Manager) UpdateUser(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(UpdateUser): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(UpdateUser): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(UpdateUser): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(UpdateUser): validation failed " + err.Error(),
 		})
 	}
 
@@ -149,11 +149,11 @@ func (h *Manager) UpdateUser(c echo.Context) error {
 	err := h.s.User.Update(ctx, user)
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrMissingWhereClause):
-		return c.JSON(http.StatusNotFound, envelope{"info": "handler(UpdateUser): user is not exist || " + err.Error()})
+		return c.JSON(http.StatusNotFound, Envelope{Msg: "handler(UpdateUser): user is not exist || " + err.Error()})
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(UpdateUser): " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(UpdateUser): " + err.Error()})
 	default:
-		return c.JSON(http.StatusOK, envelope{"info": "user updated"})
+		return c.JSON(http.StatusOK, Envelope{Msg: "user updated"})
 	}
 }
 
@@ -163,7 +163,7 @@ func (h *Manager) DeleteUser(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(DeleteUser): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(DeleteUser): bad request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -172,10 +172,10 @@ func (h *Manager) DeleteUser(c echo.Context) error {
 	err := h.s.User.Delete(ctx, input.ID)
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrMissingWhereClause):
-		return c.JSON(http.StatusNotFound, envelope{"info": "handler(DeleteUser): user is not exist || " + err.Error()})
+		return c.JSON(http.StatusNotFound, Envelope{Msg: "handler(DeleteUser): user is not exist || " + err.Error()})
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(DeleteUser): " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(DeleteUser): " + err.Error()})
 	default:
-		return c.JSON(http.StatusOK, envelope{"info": "user deleted"})
+		return c.JSON(http.StatusOK, Envelope{Msg: "user deleted"})
 	}
 }

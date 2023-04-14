@@ -14,3 +14,14 @@ func (User) TableName() string {
 type contextKey string
 
 var ContextUsername = contextKey("username")
+
+type LoginUserRq struct {
+	Name     string `json:"name"     validate:"required,min=5"`
+	Password string `json:"password" validate:"required,min=5"`
+}
+
+type UserCreateRq struct {
+	Name     string `json:"name"     validate:"required,min=5"`
+	Login    string `json:"login"    validate:"required,min=5"`
+	Password string `json:"password" validate:"required,min=5"`
+}

@@ -14,10 +14,17 @@ import (
 	"app/internal/validator"
 )
 
-// TODO настроить линтер
-// https://olegk.dev/go-linters-configuration-the-right-version
+//	@title			Onelab API
+//	@version		1.0
+//	@description	Onelab project
 
-// TODO return book repo, serv, handl
+//	@host		localhost:8080
+//	@BasePath	/
+
+//	@securityDefinitions.apiKey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
+
 func main() {
 	log.Fatalf("Service shutdown: %s\n", run())
 }

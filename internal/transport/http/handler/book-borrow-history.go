@@ -18,13 +18,12 @@ func (h *Manager) BorrowBook(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(BorrowBook): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(BorrowBook): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(BorrowBook): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(BorrowBook): validation failed " + err.Error(),
 		})
 	}
 
@@ -40,9 +39,9 @@ func (h *Manager) BorrowBook(c echo.Context) error {
 	err := h.s.BookBorrow.BorrowBook(ctx, entry)
 	switch {
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(BorrowBook): " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(BorrowBook): " + err.Error()})
 	default:
-		return c.JSON(http.StatusCreated, envelope{"info": "entry created"})
+		return c.JSON(http.StatusCreated, Envelope{Msg: "entry created"})
 	}
 }
 
@@ -53,13 +52,12 @@ func (h *Manager) ReturnBook(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(ReturnBook): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(ReturnBook): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(ReturnBook): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(ReturnBook): validation failed " + err.Error(),
 		})
 	}
 
@@ -74,9 +72,9 @@ func (h *Manager) ReturnBook(c echo.Context) error {
 	err := h.s.BookBorrow.ReturnBook(ctx, entry)
 	switch {
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(ReturnBook): " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(ReturnBook): " + err.Error()})
 	default:
-		return c.JSON(http.StatusCreated, envelope{"info": "entry updated"})
+		return c.JSON(http.StatusCreated, Envelope{Msg: "entry updated"})
 	}
 }
 
@@ -87,9 +85,9 @@ func (h *Manager) ListDebtorsBorrowHistory(c echo.Context) error {
 	list, err := h.s.BookBorrow.ListDebtors(ctx)
 	switch {
 	// case errors.Is(err, gorm.ErrRecordNotFound):
-	// 	return c.JSON(http.StatusNotFound, envelope{"info": "no record"})
+	// 	return c.JSON(http.StatusNotFound, Envelope{"info": "no record"})
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(ListDebtorsBorrowHistory)" + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(ListDebtorsBorrowHistory)" + err.Error()})
 	default:
 		return c.JSON(http.StatusFound, list)
 	}
@@ -102,13 +100,12 @@ func (h *Manager) StatMonthBorrowHistory(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{"error": "handler(StatMonthBorrowHistory): bad request"})
+		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(StatMonthBorrowHistory): bad request"})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, envelope{
-			"error":         "handler(StatMonthBorrowHistory): validation failed",
-			"errorValidate": err.Error(),
+		return c.JSON(http.StatusBadRequest, Envelope{
+			Msg: "handler(StatMonthBorrowHistory): validation failed " + err.Error(),
 		})
 	}
 
@@ -118,9 +115,9 @@ func (h *Manager) StatMonthBorrowHistory(c echo.Context) error {
 	list, err := h.s.BookBorrow.BookRentalForMonth(ctx, input.Month, 0)
 	switch {
 	// case errors.Is(err, gorm.ErrRecordNotFound):
-	// 	return c.JSON(http.StatusNotFound, envelope{"info": "no record"})
+	// 	return c.JSON(http.StatusNotFound, Envelope{"info": "no record"})
 	case err != nil:
-		return c.JSON(http.StatusInternalServerError, envelope{"error": "handler(StatMonthBorrowHistory)" + err.Error()})
+		return c.JSON(http.StatusInternalServerError, Envelope{Msg: "handler(StatMonthBorrowHistory)" + err.Error()})
 	default:
 		return c.JSON(http.StatusFound, list)
 	}

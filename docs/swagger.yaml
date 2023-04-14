@@ -1,0 +1,61 @@
+basePath: /
+definitions:
+  model.LoginUserRq:
+    properties:
+      name:
+        minLength: 5
+        type: string
+      password:
+        minLength: 5
+        type: string
+    required:
+    - name
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Onelab project
+  title: Onelab API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login
+      parameters:
+      - description: user login request
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginUserRq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: json
+        "404":
+          description: Not Found
+          schema:
+            type: json
+        "500":
+          description: Internal Server Error
+          schema:
+            type: json
+      summary: Login
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
