@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  handler.Envelope:
+    properties:
+      message:
+        type: string
+    type: object
   model.LoginUserRq:
     properties:
       name:
@@ -12,6 +17,43 @@ definitions:
     - name
     - password
     type: object
+  model.User:
+    properties:
+      login:
+        type: string
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  model.UserCreateRq:
+    properties:
+      login:
+        minLength: 5
+        type: string
+      name:
+        minLength: 5
+        type: string
+      password:
+        minLength: 5
+        type: string
+    required:
+    - login
+    - name
+    - password
+    type: object
+  model.UserUpdateRq:
+    properties:
+      id:
+        minimum: 1
+        type: integer
+      login:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -23,9 +65,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: login
+      description: Login user
       parameters:
-      - description: user login request
+      - description: User login input
         in: body
         name: input
         required: true
@@ -37,22 +79,170 @@ paths:
         "200":
           description: OK
           schema:
-            type: json
+            $ref: '#/definitions/handler.Envelope'
         "400":
           description: Bad Request
           schema:
-            type: json
-        "404":
-          description: Not Found
+            $ref: '#/definitions/handler.Envelope'
+        "401":
+          description: Unauthorized
           schema:
-            type: json
+            $ref: '#/definitions/handler.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            type: json
-      summary: Login
+            $ref: '#/definitions/handler.Envelope'
+      summary: Login user
       tags:
-      - auth
+      - user
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the input payload
+      parameters:
+      - description: User information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreateRq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: user created
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "422":
+          description: user already exist
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+      summary: Create a new user
+      tags:
+      - user
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: user deleted
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "404":
+          description: user is not exist
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user by id
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get user by id in query param
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "404":
+          description: user is not exist
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user by id
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User information
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/model.UserUpdateRq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: user updated
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "404":
+          description: user is not exist
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.Envelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Update user by id
+      tags:
+      - user
 securityDefinitions:
   ApiKeyAuth:
     in: header

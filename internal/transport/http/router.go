@@ -27,8 +27,8 @@ func (s *Server) setupRoutes() {
 
 	s.App.POST("/user", s.handler.CreateUser)
 	s.App.GET("/user/:id", s.handler.GetUser, auth)
-	s.App.PATCH("/user/:id", s.handler.UpdateUser)
-	s.App.DELETE("/user/:id", s.handler.DeleteUser)
+	s.App.PATCH("/user/:id", s.handler.UpdateUser, auth)
+	s.App.DELETE("/user/:id", s.handler.DeleteUser, auth)
 
 	s.App.POST("/book", s.handler.CreateBook)
 	s.App.GET("/book/:id", s.handler.GetBook)

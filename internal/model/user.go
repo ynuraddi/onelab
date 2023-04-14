@@ -25,3 +25,9 @@ type UserCreateRq struct {
 	Login    string `json:"login"    validate:"required,min=5"`
 	Password string `json:"password" validate:"required,min=5"`
 }
+
+type UserUpdateRq struct {
+	ID    int    `param:"id"      validate:"required,min=1"`
+	Name  string `json:"name"     `
+	Login string `json:"login"    `
+}

@@ -44,7 +44,7 @@ func (s *userService) Get(ctx context.Context, id int) (model.User, error) {
 	return u, nil
 }
 
-func (s *userService) Update(ctx context.Context, u model.User) error {
+func (s *userService) Update(ctx context.Context, u model.UserUpdateRq) error {
 	du, err := s.repo.Get(ctx, u.ID)
 	if err != nil {
 		return fmt.Errorf("userService(Update): %w", err)

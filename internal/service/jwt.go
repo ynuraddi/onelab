@@ -13,13 +13,13 @@ const expireTime = 72 * time.Hour
 
 type JWT struct {
 	jwtKey []byte
-	User   IUserService
+	// User   IUserService
 }
 
 func NewJWT(conf *config.Config, user IUserService) *JWT {
 	return &JWT{
 		jwtKey: []byte(conf.HTTP.JWTKey),
-		User:   user,
+		// User:   user,
 	}
 }
 

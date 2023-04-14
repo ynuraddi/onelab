@@ -12,19 +12,18 @@ import (
 	"gorm.io/gorm"
 )
 
-// Login godoc
-//
-//	@Summary		Login
-//	@Tags			auth
-//	@Description	login
-//	@Accept			json
-//	@Produce		json
-//	@Param			input	body	model.LoginUserRq	true	"user login request"
-//	@Success		200		{json}	handler.envelope
-//	@Failure		400		{json}	handler.envelope
-//	@Failure		404		{json}	handler.envelope
-//	@Failure		500		{json}	handler.envelope
-//	@Router			/login [post]
+// LoginUser godoc
+// @Summary Login user
+// @Description Login user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param input body model.LoginUserRq true "User login input"
+// @Success 200 {object} Envelope
+// @Failure 400 {object} Envelope
+// @Failure 401 {object} Envelope
+// @Failure 500 {object} Envelope
+// @Router /login [post]
 func (h *Manager) LoginUser(c echo.Context) error {
 	var input model.LoginUserRq
 
@@ -58,6 +57,17 @@ func (h *Manager) LoginUser(c echo.Context) error {
 	})
 }
 
+// CreateUser godoc
+// @Summary Create a new user
+// @Description Create a new user with the input payload
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param input body model.UserCreateRq true "User information"
+// @Success 201 {object}	Envelope "user created"
+// @Failure 400 {object}	Envelope "bad request"
+// @Failure 422 {object}	Envelope "user already exist"
+// @Router /user [post]
 func (h *Manager) CreateUser(c echo.Context) error {
 	var input model.UserCreateRq
 
@@ -91,6 +101,22 @@ func (h *Manager) CreateUser(c echo.Context) error {
 	}
 }
 
+// GetUser godoc
+// @Summary Get user by id
+// @Description	Get user by id in query param
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User id"
+// @Success 302 {object} model.User
+// @Failure 400 {object} Envelope "bad request"
+// @Failure 401 {object} Envelope "missing or malformed jwt"
+// @Failure 404 {object} Envelope "user is not exist"
+// @Failure 500 {object} Envelope "internal server error"
+// @Security ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Router /user/{id} [get]
 func (h *Manager) GetUser(c echo.Context) error {
 	input := struct {
 		ID int `param:"id" validate:"required,min=1"`
@@ -120,27 +146,33 @@ func (h *Manager) GetUser(c echo.Context) error {
 	}
 }
 
+// UpdateUser godoc
+// @Summary Update user by id
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param input body model.UserUpdateRq false "User information"
+// @Success 200 {object} Envelope "user updated"
+// @Failure 400 {object} Envelope "bad request"
+// @Failure 401 {object} Envelope "missing or malformed jwt"
+// @Failure 404 {object} Envelope "user is not exist"
+// @Failure 500 {object} Envelope "internal server error"
+// @Security ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Router /user/{id} [patch]
 func (h *Manager) UpdateUser(c echo.Context) error {
-	input := struct {
-		ID    int    `param:"id"      validate:"required,min=1"`
-		Name  string `json:"name"     `
-		Login string `json:"login"    `
-	}{}
+	var user model.UserUpdateRq
 
-	if err := c.Bind(&input); err != nil {
+	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, Envelope{Msg: "handler(UpdateUser): bad request"})
 	}
 
-	if err := c.Validate(input); err != nil {
+	if err := c.Validate(user); err != nil {
 		return c.JSON(http.StatusBadRequest, Envelope{
 			Msg: "handler(UpdateUser): validation failed " + err.Error(),
 		})
-	}
-
-	user := model.User{
-		ID:    input.ID,
-		Name:  input.Name,
-		Login: input.Login,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -157,6 +189,21 @@ func (h *Manager) UpdateUser(c echo.Context) error {
 	}
 }
 
+// DeleteUser godoc
+// @Summary Delete user by id
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} Envelope "user deleted"
+// @Failure 400 {object} Envelope "bad request"
+// @Failure 401 {object} Envelope "missing or malformed jwt"
+// @Failure 404 {object} Envelope "user is not exist"
+// @Failure 500 {object} Envelope "internal server error"
+// @Security ApiKeyAuth
+// @In header
+// @Name Authorization
+// @Router /user/{id} [delete]
 func (h *Manager) DeleteUser(c echo.Context) error {
 	input := struct {
 		ID int `param:"id"`

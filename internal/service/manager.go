@@ -12,7 +12,7 @@ type IUserService interface {
 	Create(context.Context, model.User) error
 	Get(ctx context.Context, id int) (model.User, error)
 	GetByUsername(ctx context.Context, username string) (model.User, error)
-	Update(context.Context, model.User) error
+	Update(context.Context, model.UserUpdateRq) error
 	Delete(context.Context, int) error
 	Auth(context.Context, model.User) error
 }
