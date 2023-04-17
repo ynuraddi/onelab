@@ -2,6 +2,7 @@ package transport
 
 import (
 	_ "app/docs"
+	"app/transport/http/middleware"
 
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
@@ -9,6 +10,7 @@ import (
 func (s *Server) setupRoutes() {
 	s.App.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	s.App.Use(middleware.LoggerMiddleware)
 	auth := s.handler.Auth.ValidateAuth
 
 	s.App.POST("/login", s.handler.LoginUser)

@@ -36,8 +36,6 @@ func run() error {
 
 	config := config.GetConfing()
 
-	// logger := logger.NewLogger(config)
-
 	repo := repository.NewRepository(config)
 
 	serv := service.NewService(repo, config)
