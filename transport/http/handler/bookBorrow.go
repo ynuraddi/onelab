@@ -60,9 +60,6 @@ func (h *Manager) CreateBookBorrow(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/borrow/{id} [get]
 func (h *Manager) GetBookBorrow(c echo.Context) error {
 	input := struct {
@@ -103,9 +100,6 @@ func (h *Manager) GetBookBorrow(c echo.Context) error {
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 409 {object} ErrEnvelope "edit conflict"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/borrow/{id} [patch]
 func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 	var input model.UpdateBookBorrowRq
@@ -144,9 +138,6 @@ func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/borrow/{id} [delete]
 func (h *Manager) DeleteBookBorrow(c echo.Context) error {
 	input := struct {
@@ -184,9 +175,6 @@ func (h *Manager) DeleteBookBorrow(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/borrow/debtor/list [get]
 func (h *Manager) ListBookBorrowDebtor(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
@@ -214,9 +202,6 @@ func (h *Manager) ListBookBorrowDebtor(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/borrow/metric/list/{id} [get]
 func (h *Manager) ListBookBorrowMetric(c echo.Context) error {
 	input := struct {

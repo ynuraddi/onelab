@@ -116,11 +116,6 @@ const docTemplate = `{
         },
         "/book/borrow/debtor/list": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "List borrow debtor record",
                 "consumes": [
                     "application/json"
@@ -165,11 +160,6 @@ const docTemplate = `{
         },
         "/book/borrow/metric/list/{id}": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "List borrow debtor record",
                 "consumes": [
                     "application/json"
@@ -229,11 +219,6 @@ const docTemplate = `{
         },
         "/book/borrow/{id}": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Get borrow record by id in query param",
                 "consumes": [
                     "application/json"
@@ -288,11 +273,6 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -346,11 +326,6 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -420,11 +395,6 @@ const docTemplate = `{
         },
         "/book/{id}": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Get book by id in query param",
                 "consumes": [
                     "application/json"
@@ -479,11 +449,6 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -537,11 +502,6 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -635,25 +595,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "logined",
                         "schema": {
                             "$ref": "#/definitions/handler.MsgEnvelope"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "bad request",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrEnvelope"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrEnvelope"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "internal server error",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrEnvelope"
                         }

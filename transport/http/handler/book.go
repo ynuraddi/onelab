@@ -59,9 +59,6 @@ func (h *Manager) CreateBook(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "book is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/{id} [get]
 func (h *Manager) GetBook(c echo.Context) error {
 	input := struct {
@@ -102,9 +99,6 @@ func (h *Manager) GetBook(c echo.Context) error {
 // @Failure 404 {object} ErrEnvelope "book is not exist"
 // @Failure 409 {object} ErrEnvelope "edit conflict"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/{id} [patch]
 func (h *Manager) UpdateBook(c echo.Context) error {
 	var input model.UpdateBookRq
@@ -143,9 +137,6 @@ func (h *Manager) UpdateBook(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "book is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Security ApiKeyAuth
-// @In header
-// @Name Authorization
 // @Router /book/{id} [delete]
 func (h *Manager) DeleteBook(c echo.Context) error {
 	input := struct {

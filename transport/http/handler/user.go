@@ -48,7 +48,7 @@ func (h *Manager) LoginUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	token, err := h.jwt.GenerateJWT(input.Login)
+	token, err := h.Auth.GenerateJWT(input.Login)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}

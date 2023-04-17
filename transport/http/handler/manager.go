@@ -8,7 +8,7 @@ import (
 
 type Manager struct {
 	service *service.Manager
-	jwt     *middleware.JWTAuth
+	Auth    *middleware.JWTAuth
 }
 
 type MsgEnvelope struct {
@@ -22,6 +22,6 @@ type ErrEnvelope struct {
 func NewManager(conf *config.Config, service *service.Manager) *Manager {
 	return &Manager{
 		service: service,
-		jwt:     middleware.NewJWTAuth(conf, service.User),
+		Auth:    middleware.NewJWTAuth(conf, service.User),
 	}
 }

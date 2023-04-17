@@ -236,8 +236,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: Delete book by id
       tags:
       - book
@@ -274,8 +272,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: Get book by id
       tags:
       - book
@@ -320,8 +316,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: Update book by id
       tags:
       - book
@@ -388,8 +382,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: Delete book borrow record by id
       tags:
       - book_borrow
@@ -426,8 +418,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: Get Borrow record by id
       tags:
       - book_borrow
@@ -472,8 +462,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: Update book borrow by id
       tags:
       - book_borrow
@@ -503,8 +491,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: List Borrow debtors
       tags:
       - book_borrow
@@ -544,8 +530,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      security:
-      - ApiKeyAuth: []
       summary: List Borrow metric
       tags:
       - book_borrow
@@ -565,19 +549,19 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: logined
           schema:
             $ref: '#/definitions/handler.MsgEnvelope'
         "400":
-          description: Bad Request
+          description: bad request
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
         "500":
-          description: Internal Server Error
+          description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
       summary: Login user

@@ -84,22 +84,23 @@ func extractToken(r *http.Request) string {
 	return ""
 }
 
-func (m *JWTAuth) ValidateActiveUser(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		token := extractToken(c.Request())
-		claims, err := m.ValidateToken(token)
-		if err != nil {
-			return echo.NewHTTPError(403, err.Error())
-		}
-		isVerify, err := m.User.IsVerified(c.Request().Context(), claims.Login)
-		if err != nil {
-			return err
-		}
-		if !isVerify {
-			return echo.NewHTTPError(http.StatusUnauthorized, errors.New("user is not verified"))
-		}
-		ctx := context.WithValue(c.Request().Context(), model.ContextLogin, claims.Login)
-		c.SetRequest(c.Request().WithContext(ctx))
-		return next(c)
-	}
-}
+// Нужно прописать логику активации юзера, перед тем как устанавливать правила
+// func (m *JWTAuth) ValidateActiveUser(next echo.HandlerFunc) echo.HandlerFunc {
+// 	return func(c echo.Context) error {
+// 		token := extractToken(c.Request())
+// 		claims, err := m.ValidateToken(token)
+// 		if err != nil {
+// 			return echo.NewHTTPError(403, err.Error())
+// 		}
+// 		isVerify, err := m.User.IsVerified(c.Request().Context(), claims.Login)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		if !isVerify {
+// 			return echo.NewHTTPError(http.StatusUnauthorized, errors.New("user is not verified"))
+// 		}
+// 		ctx := context.WithValue(c.Request().Context(), model.ContextLogin, claims.Login)
+// 		c.SetRequest(c.Request().WithContext(ctx))
+// 		return next(c)
+// 	}
+// }
