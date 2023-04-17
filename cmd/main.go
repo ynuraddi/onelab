@@ -21,10 +21,9 @@ import (
 //	@host		localhost:8080
 //	@BasePath	/
 
-//	@securityDefinitions.apiKey	ApiKeyAuth
-//	@in							header
-//	@name						Authorization
-
+// @securityDefinitions.apiKey	ApiKeyAuth
+// @in							header
+// @name						Authorization
 func main() {
 	log.Fatalf("Service shutdown: %s\n", run())
 }

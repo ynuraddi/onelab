@@ -3,10 +3,12 @@ package handler
 import (
 	"app/config"
 	"app/service"
+	"app/transport/http/middleware"
 )
 
 type Manager struct {
-	s *service.Manager
+	service *service.Manager
+	jwt     *middleware.JWTAuth
 }
 
 type MsgEnvelope struct {
@@ -19,6 +21,7 @@ type ErrEnvelope struct {
 
 func NewManager(conf *config.Config, service *service.Manager) *Manager {
 	return &Manager{
-		s: service,
+		service: service,
+		jwt:     middleware.NewJWTAuth(conf, service.User),
 	}
 }

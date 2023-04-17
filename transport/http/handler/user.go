@@ -20,27 +20,40 @@ import (
 // @Accept json
 // @Produce json
 // @Param input body model.LogInRq true "User login input"
-// @Success 200 {object} MsgEnvelope
-// @Failure 400 {object} ErrEnvelope
-// @Failure 401 {object} ErrEnvelope
-// @Failure 500 {object} ErrEnvelope
+// @Success 200 {object} MsgEnvelope "logined"
+// @Failure 400 {object} ErrEnvelope "bad request"
+// @Failure 401 {object} ErrEnvelope "unauthorized"
+// @Failure 500 {object} ErrEnvelope "internal server error"
 // @Router /login [post]
 func (h *Manager) LoginUser(c echo.Context) error {
 	var input model.LogInRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
-	// ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
+	defer cancel()
 
-	// if err := h.s.User
-	return nil
+	err := h.service.User.Authenticate(ctx, input)
+	if errors.Is(err, model.ErrUserIsNotExist) {
+		return c.JSON(http.StatusUnauthorized, ErrEnvelope{err.Error()})
+	} else if errors.Is(err, model.ErrUserWrongPassword) {
+		return c.JSON(http.StatusUnauthorized, ErrEnvelope{err.Error()})
+	} else if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+	}
+
+	token, err := h.jwt.GenerateJWT(input.Login)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, MsgEnvelope{token})
 }
 
 // CreateUser godoc
@@ -59,25 +72,25 @@ func (h *Manager) CreateUser(c echo.Context) error {
 	var input model.CreateUserRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.User.Create(ctx, input)
+	err := h.service.User.Create(ctx, input)
 	// WARNING почему то не хэндлиться ошибка в репозитории
 	if errors.Is(err, model.ErrUserIsAlreadyExist) {
-		return c.JSON(http.StatusUnprocessableEntity, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusUnprocessableEntity, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, MsgEnvelope{Msg: model.StatusUserCreated})
+	return c.JSON(http.StatusCreated, MsgEnvelope{model.StatusUserCreated})
 }
 
 // GetUser godoc
@@ -102,21 +115,21 @@ func (h *Manager) GetUser(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	user, err := h.s.User.Get(ctx, input.ID)
+	user, err := h.service.User.Get(ctx, input.ID)
 	if errors.Is(err, model.ErrUserIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
 	return c.JSON(http.StatusFound, user)
@@ -143,26 +156,26 @@ func (h *Manager) UpdateUser(c echo.Context) error {
 	var input model.UpdateUserRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.User.Update(ctx, input)
+	err := h.service.User.Update(ctx, input)
 	if errors.Is(err, model.ErrEditConflict) {
-		return c.JSON(http.StatusConflict, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusConflict, ErrEnvelope{err.Error()})
 	} else if errors.Is(err, model.ErrUserIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusOK, MsgEnvelope{Msg: model.StatusUserUpdated})
+	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusUserUpdated})
 }
 
 // DeleteUser godoc
@@ -186,22 +199,22 @@ func (h *Manager) DeleteUser(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.User.Delete(ctx, input.ID)
+	err := h.service.User.Delete(ctx, input.ID)
 	if errors.Is(err, model.ErrUserIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusOK, MsgEnvelope{Msg: model.StatusUserDeleted})
+	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusUserDeleted})
 }

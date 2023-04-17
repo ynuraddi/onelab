@@ -10,6 +10,7 @@ var (
 	ErrUserIsNotExist     = errors.New("user is not exist")
 	ErrUserIsAlreadyExist = errors.New("user is already exist")
 	ErrUserIsNotVerified  = errors.New("user is not verified")
+	ErrUserWrongPassword  = errors.New("wrong password")
 
 	ErrBookIsNotExist     = errors.New("book is not exist")
 	ErrBookIsAlreadyExist = errors.New("book is already eixst")

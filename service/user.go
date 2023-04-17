@@ -22,6 +22,19 @@ func NewUserService(repo repository.IUserRepository) *userService {
 
 const userServicePath = `userService: %w`
 
+func (s *userService) Authenticate(ctx context.Context, user model.LogInRq) error {
+	dbuser, err := s.GetByLogin(ctx, user.Login)
+	if err != nil {
+		return fmt.Errorf(userServicePath, err)
+	}
+
+	if err := s.comparePassword(user.Password, dbuser.Password); err != nil {
+		return fmt.Errorf(userServicePath, model.ErrUserWrongPassword)
+	}
+
+	return nil
+}
+
 func (s *userService) Create(ctx context.Context, user model.CreateUserRq) error {
 	hashPass, err := s.hashPassword(user.Password)
 	if err != nil {
@@ -97,9 +110,9 @@ func (s *userService) IsVerified(ctx context.Context, login string) (isActive bo
 	return isActive, nil
 }
 
-// func (s *userService) comparePassword(pass string, hash string) error {
-// 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(pass))
-// }
+func (s *userService) comparePassword(pass string, hash string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(pass))
+}
 
 func (s *userService) hashPassword(pass string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pass), 14)

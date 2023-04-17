@@ -9,6 +9,8 @@ import (
 )
 
 type IUserService interface {
+	Authenticate(ctx context.Context, user model.LogInRq) error
+
 	Create(ctx context.Context, user model.CreateUserRq) error
 	Get(ctx context.Context, id int) (model.User, error)
 	Update(ctx context.Context, user model.UpdateUserRq) error

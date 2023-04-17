@@ -10,7 +10,6 @@ import (
 	"app/config"
 	"app/model"
 	"app/service"
-	"app/transport/http/handler"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -92,20 +91,13 @@ func (m *JWTAuth) ValidateActiveUser(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(403, err.Error())
 		}
-
 		isVerify, err := m.User.IsVerified(c.Request().Context(), claims.Login)
-		if errors.Is(err, model.ErrContextExceed) {
-			return c.JSON(http.StatusBadRequest, handler.ErrEnvelope{Err: model.ErrContextExceed.Error()})
-		} else if errors.Is(err, model.ErrUserIsNotExist) {
-			return c.JSON(http.StatusNotFound, handler.ErrEnvelope{Err: model.ErrUserIsNotExist.Error()})
-		} else if err != nil {
-			return c.JSON(http.StatusInternalServerError, handler.ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		if err != nil {
+			return err
 		}
-
 		if !isVerify {
-			return echo.NewHTTPError(http.StatusUnauthorized, handler.ErrEnvelope{Err: model.ErrUserIsNotVerified.Error()})
+			return echo.NewHTTPError(http.StatusUnauthorized, errors.New("user is not verified"))
 		}
-
 		ctx := context.WithValue(c.Request().Context(), model.ContextLogin, claims.Login)
 		c.SetRequest(c.Request().WithContext(ctx))
 		return next(c)

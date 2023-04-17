@@ -27,24 +27,24 @@ func (h *Manager) CreateBook(c echo.Context) error {
 	var input model.CreateBookRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.Book.Create(ctx, input)
+	err := h.service.Book.Create(ctx, input)
 	if errors.Is(err, model.ErrBookIsAlreadyExist) {
-		return c.JSON(http.StatusUnprocessableEntity, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusUnprocessableEntity, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, MsgEnvelope{Msg: model.StatusBookCreated})
+	return c.JSON(http.StatusCreated, MsgEnvelope{model.StatusBookCreated})
 }
 
 // GetBook godoc
@@ -69,21 +69,21 @@ func (h *Manager) GetBook(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	book, err := h.s.Book.Get(ctx, input.ID)
+	book, err := h.service.Book.Get(ctx, input.ID)
 	if errors.Is(err, model.ErrBookIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
 	return c.JSON(http.StatusFound, book)
@@ -110,26 +110,26 @@ func (h *Manager) UpdateBook(c echo.Context) error {
 	var input model.UpdateBookRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.Book.Update(ctx, input)
+	err := h.service.Book.Update(ctx, input)
 	if errors.Is(err, model.ErrEditConflict) {
-		return c.JSON(http.StatusConflict, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusConflict, ErrEnvelope{err.Error()})
 	} else if errors.Is(err, model.ErrBookIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusOK, MsgEnvelope{Msg: model.StatusBookUpdated})
+	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookUpdated})
 }
 
 // DeleteBook godoc
@@ -153,22 +153,22 @@ func (h *Manager) DeleteBook(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.Book.Delete(ctx, input.ID)
+	err := h.service.Book.Delete(ctx, input.ID)
 	if errors.Is(err, model.ErrBookIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusOK, MsgEnvelope{Msg: model.StatusBookDeleted})
+	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookDeleted})
 }

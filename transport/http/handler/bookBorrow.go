@@ -28,24 +28,24 @@ func (h *Manager) CreateBookBorrow(c echo.Context) error {
 
 	if err := c.Bind(&input); err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.BookBorrow.Create(ctx, input)
+	err := h.service.BookBorrow.Create(ctx, input)
 	if errors.Is(err, model.ErrUserIsNotExist) || errors.Is(err, model.ErrBookIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, MsgEnvelope{Msg: model.StatusBookBorrowCreated})
+	return c.JSON(http.StatusCreated, MsgEnvelope{model.StatusBookBorrowCreated})
 }
 
 // GetBookBorrow godoc
@@ -70,21 +70,21 @@ func (h *Manager) GetBookBorrow(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	record, err := h.s.BookBorrow.Get(ctx, input.ID)
+	record, err := h.service.BookBorrow.Get(ctx, input.ID)
 	if errors.Is(err, model.ErrBookBorrowIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
 	return c.JSON(http.StatusFound, record)
@@ -111,26 +111,26 @@ func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 	var input model.UpdateBookBorrowRq
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.BookBorrow.Update(ctx, input)
+	err := h.service.BookBorrow.Update(ctx, input)
 	if errors.Is(err, model.ErrEditConflict) {
-		return c.JSON(http.StatusConflict, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusConflict, ErrEnvelope{err.Error()})
 	} else if errors.Is(err, model.ErrBookBorrowIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusOK, MsgEnvelope{Msg: model.StatusBookBorrowUpdated})
+	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookBorrowUpdated})
 }
 
 // DeleteBookBorrow godoc
@@ -154,24 +154,24 @@ func (h *Manager) DeleteBookBorrow(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	err := h.s.BookBorrow.Delete(ctx, input.ID)
+	err := h.service.BookBorrow.Delete(ctx, input.ID)
 	if errors.Is(err, model.ErrBookBorrowIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
-	return c.JSON(http.StatusOK, MsgEnvelope{Msg: model.StatusBookBorrowDeleted})
+	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookBorrowDeleted})
 }
 
 // ListBookBorrowDebtor godoc
@@ -192,11 +192,11 @@ func (h *Manager) ListBookBorrowDebtor(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	list, err := h.s.BookBorrow.ListDebtors(ctx)
+	list, err := h.service.BookBorrow.ListDebtors(ctx)
 	if errors.Is(err, model.ErrBookBorrowIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
 	return c.JSON(http.StatusFound, list)
@@ -224,21 +224,21 @@ func (h *Manager) ListBookBorrowMetric(c echo.Context) error {
 	}{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidJSON.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidJSON.Error()})
 	}
 
 	if err := c.Validate(input); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrEnvelope{Err: model.ErrInvalidData.Error()})
+		return c.JSON(http.StatusBadRequest, ErrEnvelope{model.ErrInvalidData.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
 	defer cancel()
 
-	list, err := h.s.BookBorrow.ListMetric(ctx, input.Month)
+	list, err := h.service.BookBorrow.ListMetric(ctx, input.Month)
 	if errors.Is(err, model.ErrBookBorrowIsNotExist) {
-		return c.JSON(http.StatusNotFound, ErrEnvelope{Err: err.Error()})
+		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{Err: model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
 	}
 
 	return c.JSON(http.StatusFound, list)
