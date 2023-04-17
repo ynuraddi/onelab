@@ -9,10 +9,12 @@ import (
 
 type Config struct {
 	HTTP struct {
-		Host   string `env:"HOST" env-default:"localhost"`
-		Port   string `env:"PORT" env-default:"8080"`
-		JWTKey string `env:"JWTKey" env-default:"secret"`
+		Host string `env:"HOST" env-default:"localhost"`
+		Port string `env:"PORT" env-default:"8080"`
 	}
+
+	JWTKey string `env:"JWTKey" env-default:"secret"`
+
 	Database struct {
 		Host   string `env:"DB_HOST" env-default:"localhost"`
 		Port   string `env:"DB_PORT" env-default:"5432"`

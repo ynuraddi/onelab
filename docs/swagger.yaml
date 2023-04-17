@@ -1,37 +1,117 @@
 basePath: /
 definitions:
-  handler.Envelope:
+  handler.ErrEnvelope:
+    properties:
+      error:
+        type: string
+    type: object
+  handler.MsgEnvelope:
     properties:
       message:
         type: string
     type: object
-  model.LoginUserRq:
+  model.Book:
     properties:
-      name:
+      author:
+        type: string
+      id:
+        minimum: 1
+        type: integer
+      title:
+        type: string
+      version:
+        type: integer
+    required:
+    - id
+    type: object
+  model.BookBorrow:
+    properties:
+      book_id:
+        type: integer
+      borrow_date:
+        type: string
+      borrow_id:
+        minimum: 1
+        type: integer
+      return_date:
+        type: string
+      user_id:
+        type: integer
+      version:
+        type: integer
+    required:
+    - borrow_id
+    type: object
+  model.BookBorrowDebtorRp:
+    properties:
+      book_id:
+        type: integer
+      book_name:
+        type: string
+      borrow_date:
+        type: string
+      borrow_id:
+        type: integer
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  model.BookBorrowMetricRp:
+    properties:
+      book_amount:
+        type: integer
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  model.CreateBookBorrowRq:
+    properties:
+      book_id:
+        minimum: 1
+        type: integer
+      borrow_date:
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - book_id
+    - borrow_date
+    - user_id
+    type: object
+  model.CreateBookRq:
+    properties:
+      author:
+        minLength: 5
+        type: string
+      title:
+        minLength: 5
+        type: string
+    required:
+    - author
+    - title
+    type: object
+  model.CreateUserRq:
+    properties:
+      login:
         minLength: 5
         type: string
       password:
         minLength: 5
         type: string
-    required:
-    - name
-    - password
-    type: object
-  model.User:
-    properties:
-      login:
-        type: string
-      name:
-        type: string
-      user_id:
-        type: integer
-    type: object
-  model.UserCreateRq:
-    properties:
-      login:
+      user_name:
         minLength: 5
         type: string
-      name:
+    required:
+    - login
+    - password
+    - user_name
+    type: object
+  model.LogInRq:
+    properties:
+      login:
         minLength: 5
         type: string
       password:
@@ -39,18 +119,46 @@ definitions:
         type: string
     required:
     - login
-    - name
     - password
     type: object
-  model.UserUpdateRq:
+  model.UpdateBookBorrowRq:
+    properties:
+      book_id:
+        type: integer
+      borrow_date:
+        type: string
+      return_date:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  model.UpdateBookRq:
+    properties:
+      author:
+        type: string
+      title:
+        type: string
+    type: object
+  model.UpdateUserRq:
+    properties:
+      login:
+        type: string
+      user_name:
+        type: string
+    type: object
+  model.User:
     properties:
       id:
         minimum: 1
         type: integer
+      is_active:
+        type: boolean
       login:
         type: string
-      name:
+      user_name:
         type: string
+      version:
+        type: integer
     required:
     - id
     type: object
@@ -61,6 +169,386 @@ info:
   title: Onelab API
   version: "1.0"
 paths:
+  /book:
+    post:
+      consumes:
+      - application/json
+      description: Create a new book with the input payload
+      parameters:
+      - description: Book information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateBookRq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Book created
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "422":
+          description: book already exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      summary: Create a new book
+      tags:
+      - book
+  /book/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: book deleted
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: book is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete book by id
+      tags:
+      - book
+    get:
+      consumes:
+      - application/json
+      description: Get book by id in query param
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/model.Book'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: book is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Get book by id
+      tags:
+      - book
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Book information
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/model.UpdateBookRq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: book updated
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: book is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "409":
+          description: edit conflict
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Update book by id
+      tags:
+      - book
+  /book/borrow:
+    post:
+      consumes:
+      - application/json
+      description: Create a new book borrow with the input payload
+      parameters:
+      - description: Book borrow information time:2020-04-17T18:25:43.511Z
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateBookBorrowRq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: record created
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      summary: Create a new book borrow
+      tags:
+      - book_borrow
+  /book/borrow/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: BookBorrow ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record deleted
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete book borrow record by id
+      tags:
+      - book_borrow
+    get:
+      consumes:
+      - application/json
+      description: Get borrow record by id in query param
+      parameters:
+      - description: BookBorrow ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/model.BookBorrow'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Borrow record by id
+      tags:
+      - book_borrow
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: BookBorrow ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: record update information
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/model.UpdateBookBorrowRq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record updated
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "409":
+          description: edit conflict
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: Update book borrow by id
+      tags:
+      - book_borrow
+  /book/borrow/debtor/list:
+    get:
+      consumes:
+      - application/json
+      description: List borrow debtor record
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            items:
+              $ref: '#/definitions/model.BookBorrowDebtorRp'
+            type: array
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: List Borrow debtors
+      tags:
+      - book_borrow
+  /book/borrow/metric/list/{id}:
+    get:
+      consumes:
+      - application/json
+      description: List borrow debtor record
+      parameters:
+      - description: Month
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.BookBorrowMetricRp'
+            type: array
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: List Borrow metric
+      tags:
+      - book_borrow
   /login:
     post:
       consumes:
@@ -72,26 +560,26 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/model.LoginUserRq'
+          $ref: '#/definitions/model.LogInRq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.MsgEnvelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
       summary: Login user
       tags:
       - user
@@ -106,22 +594,26 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/model.UserCreateRq'
+          $ref: '#/definitions/model.CreateUserRq'
       produces:
       - application/json
       responses:
         "201":
           description: user created
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.MsgEnvelope'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "422":
           description: user already exist
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
       summary: Create a new user
       tags:
       - user
@@ -141,23 +633,23 @@ paths:
         "200":
           description: user deleted
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.MsgEnvelope'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "401":
           description: missing or malformed jwt
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "404":
           description: user is not exist
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
       security:
       - ApiKeyAuth: []
       summary: Delete user by id
@@ -168,7 +660,7 @@ paths:
       - application/json
       description: Get user by id in query param
       parameters:
-      - description: User id
+      - description: User ID
         in: path
         name: id
         required: true
@@ -183,19 +675,19 @@ paths:
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "401":
           description: missing or malformed jwt
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "404":
           description: user is not exist
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
       security:
       - ApiKeyAuth: []
       summary: Get user by id
@@ -214,30 +706,34 @@ paths:
         in: body
         name: input
         schema:
-          $ref: '#/definitions/model.UserUpdateRq'
+          $ref: '#/definitions/model.UpdateUserRq'
       produces:
       - application/json
       responses:
         "200":
           description: user updated
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.MsgEnvelope'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "401":
           description: missing or malformed jwt
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
         "404":
           description: user is not exist
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "409":
+          description: edit conflict
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/handler.Envelope'
+            $ref: '#/definitions/handler.ErrEnvelope'
       security:
       - ApiKeyAuth: []
       summary: Update user by id

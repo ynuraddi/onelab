@@ -7,11 +7,11 @@ import (
 	"os/signal"
 
 	"app/config"
-	"app/internal/repository"
-	"app/internal/service"
-	transport "app/internal/transport/http"
-	"app/internal/transport/http/handler"
-	"app/internal/validator"
+	"app/repository"
+	"app/service"
+	transport "app/transport/http"
+	"app/transport/http/handler"
+	"app/validator"
 )
 
 //	@title			Onelab API

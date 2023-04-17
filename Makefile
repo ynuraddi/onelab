@@ -1,10 +1,10 @@
 migration_up: confirm
 	@echo 'Running up migrations...'
-	migrate -path=./internal/repository/postgre/migrations -database=postgres://onelab:onelab@localhost:5432/onelab?sslmode=disable up
+	migrate -path=./repository/postgres/migrations -database=postgres://onelab:onelab@localhost:5432/onelab?sslmode=disable up
 
 migration_version:
 	@echo 'Running up migrations...'
-	migrate -path=./internal/repository/postgre/migrations -database=postgres://onelab:onelab@localhost:5432/onelab?sslmode=disable version
+	migrate -path=./repository/postgres/migrations -database=postgres://onelab:onelab@localhost:5432/onelab?sslmode=disable version
 
 run/db:
 	@echo 'Running up container with database...'
