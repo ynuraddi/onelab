@@ -25,12 +25,11 @@ func NewBookRepository(db *gorm.DB) *bookRepository {
 func (r *bookRepository) Create(ctx context.Context, b model.CreateBookRq) error {
 	err := r.db.WithContext(ctx).
 		Create(&model.Book{
-			Title:  b.Title,
-			Author: b.Author,
+			Title:   b.Title,
+			Author:  b.Author,
+			Version: 1,
 		}).Error
-	if errors.Is(err, gorm.ErrDuplicatedKey) {
-		return fmt.Errorf(bookRepositoryPath, model.ErrBookIsAlreadyExist)
-	} else if err != nil {
+	if err != nil {
 		return fmt.Errorf(bookRepositoryPath, err)
 	}
 

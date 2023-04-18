@@ -20,6 +20,7 @@ type IUserService interface {
 	IsVerified(ctx context.Context, login string) (isActive bool, err error)
 }
 
+//go:generate mockery --name IBookService
 type IBookService interface {
 	Create(ctx context.Context, book model.CreateBookRq) error
 	Get(ctx context.Context, id int) (model.Book, error)

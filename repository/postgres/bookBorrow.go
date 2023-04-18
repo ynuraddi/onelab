@@ -29,6 +29,7 @@ func (r *bookBorrowRepository) Create(ctx context.Context, record model.CreateBo
 			BookID:     record.BookID,
 			UserID:     record.UserID,
 			BorrowDate: record.BorrowDate,
+			Version:    1,
 		}).
 		Error; err != nil {
 		return fmt.Errorf(bookBorrowRepositoryPath, err)

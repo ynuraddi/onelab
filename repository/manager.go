@@ -18,6 +18,7 @@ type IUserRepository interface {
 	IsVerified(ctx context.Context, login string) (isActive bool, err error)
 }
 
+//go:generate mockery --name IBookReposiotry
 type IBookRepository interface {
 	Create(ctx context.Context, book model.CreateBookRq) error
 	Get(ctx context.Context, id int) (model.Book, error)

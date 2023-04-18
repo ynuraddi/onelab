@@ -1,56 +1,49 @@
 package logger
 
-import (
-	"context"
-	"log"
+// type loggerType int
 
-	"go.uber.org/zap"
-)
+// const (
+// 	requestIDKey loggerType = iota
+// 	sessionIDKey
+// )
 
-type loggerType int
+// var logger zap.SugaredLogger
 
-const (
-	requestIDKey loggerType = iota
-	sessionIDKey
-)
+// func init() {
+// 	c := zap.NewProductionConfig()
+// 	c.OutputPaths = []string{"./tmp/logs.log"}
+// 	l, err := c.Build()
+// 	if err != nil {
+// 		log.Fatalf("can't initialize zap logger: %v", err)
+// 	}
+// 	defer logger.Sync()
 
-var logger zap.SugaredLogger
+// 	logger = *l.Sugar()
+// }
 
-func init() {
-	c := zap.NewProductionConfig()
-	c.OutputPaths = []string{"./tmp/logs.log"}
-	l, err := c.Build()
-	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
-	}
-	defer logger.Sync()
+// func WithRqId(ctx context.Context, reqID string) context.Context {
+// 	return context.WithValue(ctx, requestIDKey, reqID)
+// }
 
-	logger = *l.Sugar()
-}
+// func WithSessionId(ctx context.Context, sessionId string) context.Context {
+// 	return context.WithValue(ctx, sessionIDKey, sessionId)
+// }
 
-func WithRqId(ctx context.Context, reqID string) context.Context {
-	return context.WithValue(ctx, requestIDKey, reqID)
-}
+// func Info(ctx context.Context, msg string) {
+// 	l := Logger(ctx)
+// 	l.With(msg).Info()
+// }
 
-func WithSessionId(ctx context.Context, sessionId string) context.Context {
-	return context.WithValue(ctx, sessionIDKey, sessionId)
-}
+// func Logger(ctx context.Context) zap.SugaredLogger {
+// 	newLogger := &logger
+// 	if ctx != nil {
+// 		if ctxRqId, ok := ctx.Value(requestIDKey).(string); ok {
+// 			newLogger = newLogger.With(zap.String("rqId", ctxRqId))
+// 		}
+// 		if ctxSessionId, ok := ctx.Value(sessionIDKey).(string); ok {
+// 			newLogger = newLogger.With(zap.String("sessionId", ctxSessionId))
+// 		}
+// 	}
 
-func Info(ctx context.Context, msg string) {
-	l := Logger(ctx)
-	l.With(msg).Info()
-}
-
-func Logger(ctx context.Context) zap.SugaredLogger {
-	newLogger := &logger
-	if ctx != nil {
-		if ctxRqId, ok := ctx.Value(requestIDKey).(string); ok {
-			newLogger = newLogger.With(zap.String("rqId", ctxRqId))
-		}
-		if ctxSessionId, ok := ctx.Value(sessionIDKey).(string); ok {
-			newLogger = newLogger.With(zap.String("sessionId", ctxSessionId))
-		}
-	}
-
-	return *newLogger
-}
+// 	return *newLogger
+// }

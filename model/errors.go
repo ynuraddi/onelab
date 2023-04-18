@@ -13,7 +13,7 @@ var (
 	ErrUserWrongPassword  = errors.New("wrong password")
 
 	ErrBookIsNotExist     = errors.New("book is not exist")
-	ErrBookIsAlreadyExist = errors.New("book is already eixst")
+	ErrBookIsAlreadyExist = errors.New("book is already exist")
 
 	ErrBookBorrowIsNotExist = errors.New("record is not exist")
 
