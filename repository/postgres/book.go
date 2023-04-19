@@ -27,6 +27,7 @@ func (r *bookRepository) Create(ctx context.Context, b model.CreateBookRq) error
 		Create(&model.Book{
 			Title:   b.Title,
 			Author:  b.Author,
+			Price:   b.Price,
 			Version: 1,
 		}).Error
 	if err != nil {

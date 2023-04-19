@@ -1,2 +1,1 @@
-alter table books
-add column price int not null;
+alter table books add column price int not null;
