@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"app/model"
@@ -31,12 +32,12 @@ func (r *userRepository) Create(ctx context.Context, u model.CreateUserRq) error
 		IsActive: false,
 		Version:  1,
 	}).Error
-
 	// fmt.Println(err)
 	// fmt.Println(errors.Is(err, gorm.ErrDuplicatedKey))
 
 	// WARNING почему то не хэндлиться ошибка
-	if errors.Is(err, gorm.ErrDuplicatedKey) {
+	// костыль
+	if errors.Is(err, gorm.ErrDuplicatedKey) || strings.Contains(err.Error(), "duplicate key value") {
 		return fmt.Errorf(userRepositoryPath, model.ErrUserIsAlreadyExist)
 	} else if err != nil {
 		return fmt.Errorf(userRepositoryPath, err)

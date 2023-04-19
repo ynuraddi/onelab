@@ -49,6 +49,7 @@ func TestCreateBookHandler(t *testing.T) {
 			input: model.CreateBookRq{
 				Title:  "aboba",
 				Author: "aboba",
+				Price:  100,
 			},
 			wantMsg:  `{"message":"book created"}`,
 			wantStat: http.StatusCreated,
@@ -62,6 +63,7 @@ func TestCreateBookHandler(t *testing.T) {
 			input: model.CreateBookRq{
 				Title:  "aboba",
 				Author: "aboba",
+				Price:  100,
 			},
 			wantMsg:  `{"error":"book is already exist"}`,
 			wantStat: http.StatusUnprocessableEntity,
@@ -75,6 +77,7 @@ func TestCreateBookHandler(t *testing.T) {
 			input: model.CreateBookRq{
 				Title:  "abobab",
 				Author: "",
+				Price:  100,
 			},
 			wantMsg:  `{"error":"invalid data"}`,
 			wantStat: http.StatusBadRequest,
@@ -85,6 +88,7 @@ func TestCreateBookHandler(t *testing.T) {
 			input: model.CreateBookRq{
 				Title:  "abobab",
 				Author: "abobab",
+				Price:  100,
 			},
 			wantMsg:  `{"error":"unexpected error"}`,
 			wantStat: http.StatusInternalServerError,

@@ -40,30 +40,6 @@ definitions:
       version:
         type: integer
     type: object
-  model.BookBorrowDebtorRp:
-    properties:
-      book_id:
-        type: integer
-      book_name:
-        type: string
-      borrow_date:
-        type: string
-      borrow_id:
-        type: integer
-      user_id:
-        type: integer
-      user_name:
-        type: string
-    type: object
-  model.BookBorrowMetricRp:
-    properties:
-      book_amount:
-        type: integer
-      user_id:
-        type: integer
-      user_name:
-        type: string
-    type: object
   model.CreateBookBorrowRq:
     properties:
       book_id:
@@ -462,74 +438,6 @@ paths:
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
       summary: Update book borrow by id
-      tags:
-      - book_borrow
-  /book/borrow/debtor/list:
-    get:
-      consumes:
-      - application/json
-      description: List borrow debtor record
-      produces:
-      - application/json
-      responses:
-        "302":
-          description: Found
-          schema:
-            items:
-              $ref: '#/definitions/model.BookBorrowDebtorRp'
-            type: array
-        "401":
-          description: missing or malformed jwt
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-        "404":
-          description: record is not exist
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-        "500":
-          description: internal server error
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-      summary: List Borrow debtors
-      tags:
-      - book_borrow
-  /book/borrow/metric/list/{id}:
-    get:
-      consumes:
-      - application/json
-      description: List borrow debtor record
-      parameters:
-      - description: Month
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.BookBorrowMetricRp'
-            type: array
-        "400":
-          description: bad request
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-        "401":
-          description: missing or malformed jwt
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-        "404":
-          description: record is not exist
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-        "500":
-          description: internal server error
-          schema:
-            $ref: '#/definitions/handler.ErrEnvelope'
-      summary: List Borrow metric
       tags:
       - book_borrow
   /login:

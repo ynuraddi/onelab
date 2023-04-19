@@ -16,6 +16,6 @@ type PayTransactionRq struct {
 	Amount int    `json:"amount"`
 }
 
-type ErrTransactionRp struct {
-	Err string `json:"error"`
+type RollbackTransactionRq struct {
+	UUID string `json:"uuid"`
 }

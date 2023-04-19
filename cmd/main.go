@@ -38,7 +38,7 @@ func run() error {
 
 	repo := repository.NewRepository(config)
 
-	serv := service.NewService(repo, config)
+	serv := service.NewService(config, repo)
 
 	validator := validator.NewValidator()
 

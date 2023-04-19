@@ -47,6 +47,7 @@ func (s *libraryService) BorrowBook(ctx context.Context, record model.LibraryBor
 		// для простоты
 		BorrowDate: time.Now(),
 	}); err != nil {
+		// rollback
 		return rp, fmt.Errorf(libraryServicePath, err)
 	}
 

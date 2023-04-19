@@ -21,7 +21,7 @@ func TestCreateBookRepository(t *testing.T) {
 		{
 			name: "Created",
 			input: model.CreateBookRq{
-				Title:  "DROP TABLE books;",
+				Title:  ";DROP TABLE books;",
 				Author: "aboba",
 			},
 			want: nil,

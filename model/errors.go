@@ -25,4 +25,5 @@ var (
 	ErrRecordNotFound = errors.New("record not found")
 
 	ErrTransactionFailed = errors.New("failed transaction")
+	ErrRollbackFailed    = errors.New("failed rollback")
 )

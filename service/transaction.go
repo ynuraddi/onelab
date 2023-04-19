@@ -38,6 +38,21 @@ func (s *transactionService) Create(ctx context.Context, tr model.CreateTransact
 	return rp, nil
 }
 
+func (s *transactionService) Rollback(ctx context.Context, uuid string) error {
+	rq := model.RollbackTransactionRq{UUID: uuid}
+
+	code, err := s.doReq(ctx, http.MethodDelete, "/rollback", rq, nil)
+	if err != nil {
+		return fmt.Errorf(transactionServicePath, err)
+	}
+
+	if code != http.StatusOK {
+		return fmt.Errorf(transactionServicePath, model.ErrRollbackFailed)
+	}
+
+	return nil
+}
+
 func (s *transactionService) Pay(ctx context.Context, tr model.PayTransactionRq) error {
 	code, err := s.doReq(ctx, http.MethodPatch, "/transaction", tr, nil)
 	if err != nil {
@@ -78,3 +93,11 @@ func (s *transactionService) doReq(ctx context.Context, method, source string, i
 
 	return resp.StatusCode, nil
 }
+
+// func (s *transactionService) uuidGenerator() (string, error) {
+// 	str := uuid.New().String()
+// 	if len(str) == 0 {
+// 		return "", errors.New("failed generate UUID")
+// 	}
+// 	return str, nil
+// }
