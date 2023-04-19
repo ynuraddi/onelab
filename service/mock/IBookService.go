@@ -66,6 +66,30 @@ func (_m *IBookService) Get(ctx context.Context, id int) (model.Book, error) {
 	return r0, r1
 }
 
+// GetByTitle provides a mock function with given fields: ctx, title
+func (_m *IBookService) GetByTitle(ctx context.Context, title string) (model.Book, error) {
+	ret := _m.Called(ctx, title)
+
+	var r0 model.Book
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (model.Book, error)); ok {
+		return rf(ctx, title)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) model.Book); ok {
+		r0 = rf(ctx, title)
+	} else {
+		r0 = ret.Get(0).(model.Book)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, title)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: ctx, book
 func (_m *IBookService) Update(ctx context.Context, book model.UpdateBookRq) error {
 	ret := _m.Called(ctx, book)

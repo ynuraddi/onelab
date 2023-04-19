@@ -57,16 +57,22 @@ type Manager struct {
 	User       IUserService
 	Book       IBookService
 	BookBorrow IBookBorrowService
+	Trans      ITransactionService
+	Library    ILibraryService
 }
 
 func NewService(conf *config.Config, repo *repository.Manager) *Manager {
 	userS := NewUserService(repo.User)
 	bookS := NewBookService(repo.Book)
 	borrS := NewBookBorrowService(repo.BookBorrow, userS, bookS)
+	tranS := NewTransactionService(conf)
+	librS := NewLibraryService(borrS, userS, bookS)
 
 	return &Manager{
 		User:       userS,
 		Book:       bookS,
 		BookBorrow: borrS,
+		Trans:      tranS,
+		Library:    librS,
 	}
 }
