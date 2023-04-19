@@ -80,10 +80,14 @@ func (r *bookBorrowRepository) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r *bookBorrowRepository) GetDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
-	err = r.db.WithContext(ctx).Model(&model.BookBorrow{}).Where("return_date is null").Find(&debtors).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrEmptySlice) {
-		return debtors, fmt.Errorf(bookBorrowRepositoryPath, err)
+func (r *bookBorrowRepository) ListDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
+	err = r.db.WithContext(ctx).Model(&model.BookBorrow{}).
+		Select("id", "borrow_date", "book_id", "user_id").
+		Where("return_date is null").
+		Find(&debtors).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrEmptySlice) || len(debtors) == 0 {
+		return debtors, fmt.Errorf(bookBorrowRepositoryPath, model.ErrRecordNotFound)
 	} else if err != nil {
 		return debtors, fmt.Errorf(bookBorrowRepositoryPath, err)
 	}
@@ -91,15 +95,15 @@ func (r *bookBorrowRepository) GetDebtors(ctx context.Context) (debtors []*model
 	return debtors, nil
 }
 
-func (r *bookBorrowRepository) GetMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
+func (r *bookBorrowRepository) ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetricRepo, err error) {
 	err = r.db.WithContext(ctx).Model(&model.BookBorrow{}).
-		Select("user_id, array_agg(title) as books").
+		Select("user_id, array_agg(book_id) as books").
 		Where("extract(month from borrow_date) = ?", month).
 		Group("user_id").
 		Find(&metric).Error
 
-	if errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrEmptySlice) {
-		return metric, fmt.Errorf(bookBorrowRepositoryPath, err)
+	if errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrEmptySlice) || len(metric) == 0 {
+		return metric, fmt.Errorf(bookBorrowRepositoryPath, model.ErrRecordNotFound)
 	} else if err != nil {
 		return metric, fmt.Errorf(bookBorrowRepositoryPath, err)
 	}

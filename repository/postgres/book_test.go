@@ -26,6 +26,11 @@ func TestCreateBookRepository(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name:  "Created",
+			input: model.CreateBookRq{},
+			want:  nil,
+		},
 	}
 
 	for _, test := range cases {

@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"app/model"
@@ -93,7 +95,7 @@ func (s *bookBorrowService) Delete(ctx context.Context, id int) error {
 }
 
 func (s *bookBorrowService) GetDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
-	debtors, err = s.repo.GetDebtors(ctx)
+	debtors, err = s.repo.ListDebtors(ctx)
 	if err != nil {
 		return debtors, fmt.Errorf(bookBorrowServicePath, err)
 	}
@@ -102,9 +104,44 @@ func (s *bookBorrowService) GetDebtors(ctx context.Context) (debtors []*model.Li
 }
 
 func (s *bookBorrowService) GetMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
-	metric, err = s.repo.GetMetric(ctx, month)
+	list, err := s.repo.ListMetric(ctx, month)
 	if err != nil {
 		return metric, fmt.Errorf(bookBorrowServicePath, err)
+	}
+
+	{
+		books := map[int]*model.Book{}
+
+		str := ""
+		for _, l := range list {
+			str = l.Books
+			str = strings.TrimPrefix(str, "{")
+			str = strings.TrimSuffix(str, "}")
+			booksStrArr := strings.Split(str, ",")
+
+			booksTitles := []string{}
+
+			for _, strID := range booksStrArr {
+				bookID, _ := strconv.Atoi(strID)
+				if book, ok := books[bookID]; ok {
+					booksTitles = append(booksTitles, book.Title)
+					continue
+				}
+
+				book, err := s.bookS.Get(ctx, bookID)
+				if err != nil {
+					return metric, fmt.Errorf(bookBorrowServicePath, err)
+				}
+				booksTitles = append(booksTitles, book.Title)
+				books[bookID] = &book
+			}
+
+			metric = append(metric, &model.LibraryMetric{
+				UserID:   l.UserID,
+				UserName: l.UserName,
+				Books:    booksTitles,
+			})
+		}
 	}
 
 	return metric, nil

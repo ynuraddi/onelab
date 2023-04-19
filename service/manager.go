@@ -51,6 +51,7 @@ type ILibraryService interface {
 type ITransactionService interface {
 	Create(ctx context.Context, tr model.CreateTransactionRq) (model.CreateTransactionRp, error)
 	Pay(ctx context.Context, tr model.PayTransactionRq) error
+	Rollback(ctx context.Context, uuid model.RollbackTransactionRq) error
 }
 
 type Manager struct {

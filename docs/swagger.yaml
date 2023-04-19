@@ -87,6 +87,32 @@ definitions:
     - password
     - user_name
     type: object
+  model.LibraryDebtor:
+    properties:
+      book_id:
+        type: integer
+      book_name:
+        type: string
+      borrow_date:
+        type: string
+      borrow_id:
+        type: integer
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  model.LibraryMetric:
+    properties:
+      books:
+        items:
+          type: string
+        type: array
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
   model.LogInRq:
     properties:
       login:
@@ -294,7 +320,7 @@ paths:
       summary: Update book by id
       tags:
       - book
-  /book/borrow:
+  /borrow:
     post:
       consumes:
       - application/json
@@ -324,7 +350,7 @@ paths:
       summary: Create a new book borrow
       tags:
       - book_borrow
-  /book/borrow/{id}:
+  /borrow/{id}:
     delete:
       consumes:
       - application/json
@@ -440,6 +466,74 @@ paths:
       summary: Update book borrow by id
       tags:
       - book_borrow
+  /library/debtor/list:
+    get:
+      consumes:
+      - application/json
+      description: List library debtor record
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            items:
+              $ref: '#/definitions/model.LibraryDebtor'
+            type: array
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      summary: List library debtors
+      tags:
+      - library
+  /library/metric/list/{id}:
+    get:
+      consumes:
+      - application/json
+      description: List library debtor record
+      parameters:
+      - description: Month
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LibraryMetric'
+            type: array
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      summary: List library metric
+      tags:
+      - library
   /login:
     post:
       consumes:

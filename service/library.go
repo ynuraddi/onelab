@@ -12,6 +12,7 @@ type libraryService struct {
 	borrS IBookBorrowService
 	userS IUserService
 	bookS IBookService
+	tranS ITransactionService
 }
 
 func NewLibraryService(bbs IBookBorrowService, us IUserService, bs IBookService) *libraryService {
@@ -35,19 +36,27 @@ func (s *libraryService) BorrowBook(ctx context.Context, record model.LibraryBor
 		return rp, fmt.Errorf(libraryServicePath, err)
 	}
 
-	rp.Score = book.Price * record.RentTerm
-	// rp.TransactionUUID =
-	// start Transaction return uuid
+	amount := record.RentTerm * book.Price
+
+	uuid, err := s.tranS.Create(ctx, model.CreateTransactionRq{
+		UserID: user.ID,
+		BookID: book.ID,
+		Amount: amount,
+	})
+	if err != nil {
+		return model.LibraryBorrowRp{}, fmt.Errorf(libraryServicePath, err)
+	}
 
 	if err := s.borrS.Create(ctx, model.CreateBookBorrowRq{
-		// IMPLEMENT
-		UUID:   "",
-		BookID: book.ID,
-		UserID: user.ID,
-		// для простоты
+		UUID:       uuid.UUID,
+		BookID:     book.ID,
+		UserID:     user.ID,
 		BorrowDate: time.Now(),
 	}); err != nil {
-		// rollback
+		if err = s.tranS.Rollback(ctx, model.RollbackTransactionRq{UUID: uuid.UUID}); err != nil {
+			return rp, fmt.Errorf(libraryServicePath, err)
+		}
+
 		return rp, fmt.Errorf(libraryServicePath, err)
 	}
 

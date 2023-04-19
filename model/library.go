@@ -1,9 +1,11 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type LibraryBorrowRq struct {
-	UserLogin string `json:"login" validate:"required,min=5"`
+	UserLogin string `json:"-"`
 	BookTitle string `json:"title" validate:"required,min=5"`
 	RentTerm  int    `json:"rent_term" validate:"required,min=1"`
 }
@@ -25,6 +27,12 @@ type LibraryDebtor struct {
 	UserName   string    `json:"user_name"   gorm:"column:name"`
 	BookID     int       `json:"book_id"     gorm:"column:book_id"`
 	BookTitle  string    `json:"book_name"   gorm:"column:title"`
+}
+
+type LibraryMetricRepo struct {
+	UserID   int    `json:"user_id"        gorm:"column:user_id"`
+	UserName string `json:"user_name"      gorm:"column:name"`
+	Books    string `json:"books"          gorm:"column:books"`
 }
 
 type LibraryMetric struct {

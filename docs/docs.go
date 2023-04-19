@@ -68,7 +68,183 @@ const docTemplate = `{
                 }
             }
         },
-        "/book/borrow": {
+        "/book/{id}": {
+            "get": {
+                "description": "Get book by id in query param",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "Get book by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Book"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "book is not exist",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "Delete book by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "book deleted",
+                        "schema": {
+                            "$ref": "#/definitions/handler.MsgEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "book is not exist",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "Update book by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Book information",
+                        "name": "input",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateBookRq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "book updated",
+                        "schema": {
+                            "$ref": "#/definitions/handler.MsgEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "book is not exist",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "409": {
+                        "description": "edit conflict",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/borrow": {
             "post": {
                 "description": "Create a new book borrow with the input payload",
                 "consumes": [
@@ -114,7 +290,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/book/borrow/{id}": {
+        "/borrow/{id}": {
             "get": {
                 "description": "Get borrow record by id in query param",
                 "consumes": [
@@ -290,9 +466,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/book/{id}": {
+        "/library/debtor/list": {
             "get": {
-                "description": "Get book by id in query param",
+                "description": "List library debtor record",
                 "consumes": [
                     "application/json"
                 ],
@@ -300,29 +476,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "book"
+                    "library"
                 ],
-                "summary": "Get book by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "List library debtors",
                 "responses": {
                     "302": {
                         "description": "Found",
                         "schema": {
-                            "$ref": "#/definitions/model.Book"
-                        }
-                    },
-                    "400": {
-                        "description": "bad request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ErrEnvelope"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LibraryDebtor"
+                            }
                         }
                     },
                     "401": {
@@ -332,7 +496,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "book is not exist",
+                        "description": "record is not exist",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrEnvelope"
                         }
@@ -344,8 +508,11 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/library/metric/list/{id}": {
+            "get": {
+                "description": "List library debtor record",
                 "consumes": [
                     "application/json"
                 ],
@@ -353,13 +520,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "book"
+                    "library"
                 ],
-                "summary": "Delete book by id",
+                "summary": "List library metric",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Book ID",
+                        "description": "Month",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -367,9 +534,12 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "book deleted",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.MsgEnvelope"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LibraryMetric"
+                            }
                         }
                     },
                     "400": {
@@ -385,74 +555,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "book is not exist",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ErrEnvelope"
-                        }
-                    },
-                    "500": {
-                        "description": "internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ErrEnvelope"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "book"
-                ],
-                "summary": "Update book by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Book information",
-                        "name": "input",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/model.UpdateBookRq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "book updated",
-                        "schema": {
-                            "$ref": "#/definitions/handler.MsgEnvelope"
-                        }
-                    },
-                    "400": {
-                        "description": "bad request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ErrEnvelope"
-                        }
-                    },
-                    "401": {
-                        "description": "missing or malformed jwt",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ErrEnvelope"
-                        }
-                    },
-                    "404": {
-                        "description": "book is not exist",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ErrEnvelope"
-                        }
-                    },
-                    "409": {
-                        "description": "edit conflict",
+                        "description": "record is not exist",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrEnvelope"
                         }
@@ -887,6 +990,46 @@ const docTemplate = `{
                 "user_name": {
                     "type": "string",
                     "minLength": 5
+                }
+            }
+        },
+        "model.LibraryDebtor": {
+            "type": "object",
+            "properties": {
+                "book_id": {
+                    "type": "integer"
+                },
+                "book_name": {
+                    "type": "string"
+                },
+                "borrow_date": {
+                    "type": "string"
+                },
+                "borrow_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LibraryMetric": {
+            "type": "object",
+            "properties": {
+                "books": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
                 }
             }
         },

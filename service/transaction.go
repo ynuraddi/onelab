@@ -38,10 +38,8 @@ func (s *transactionService) Create(ctx context.Context, tr model.CreateTransact
 	return rp, nil
 }
 
-func (s *transactionService) Rollback(ctx context.Context, uuid string) error {
-	rq := model.RollbackTransactionRq{UUID: uuid}
-
-	code, err := s.doReq(ctx, http.MethodDelete, "/rollback", rq, nil)
+func (s *transactionService) Rollback(ctx context.Context, uuid model.RollbackTransactionRq) error {
+	code, err := s.doReq(ctx, http.MethodDelete, "/rollback", uuid, nil)
 	if err != nil {
 		return fmt.Errorf(transactionServicePath, err)
 	}

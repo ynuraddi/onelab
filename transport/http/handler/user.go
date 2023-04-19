@@ -45,7 +45,7 @@ func (h *Manager) LoginUser(c echo.Context) error {
 	} else if errors.Is(err, model.ErrUserWrongPassword) {
 		return c.JSON(http.StatusUnauthorized, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	token, err := h.Auth.GenerateJWT(input.Login)
@@ -87,7 +87,7 @@ func (h *Manager) CreateUser(c echo.Context) error {
 	if errors.Is(err, model.ErrUserIsAlreadyExist) {
 		return c.JSON(http.StatusUnprocessableEntity, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, MsgEnvelope{model.StatusUserCreated})
@@ -129,7 +129,7 @@ func (h *Manager) GetUser(c echo.Context) error {
 	if errors.Is(err, model.ErrUserIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusFound, user)
@@ -172,7 +172,7 @@ func (h *Manager) UpdateUser(c echo.Context) error {
 	} else if errors.Is(err, model.ErrUserIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusUserUpdated})
@@ -213,7 +213,7 @@ func (h *Manager) DeleteUser(c echo.Context) error {
 	if errors.Is(err, model.ErrUserIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusUserDeleted})

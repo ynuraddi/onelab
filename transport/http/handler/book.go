@@ -41,7 +41,7 @@ func (h *Manager) CreateBook(c echo.Context) error {
 	if errors.Is(err, model.ErrBookIsAlreadyExist) {
 		return c.JSON(http.StatusUnprocessableEntity, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, MsgEnvelope{model.StatusBookCreated})
@@ -80,7 +80,7 @@ func (h *Manager) GetBook(c echo.Context) error {
 	if errors.Is(err, model.ErrBookIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusFound, book)
@@ -120,7 +120,7 @@ func (h *Manager) UpdateBook(c echo.Context) error {
 	} else if errors.Is(err, model.ErrBookIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookUpdated})
@@ -158,7 +158,7 @@ func (h *Manager) DeleteBook(c echo.Context) error {
 	if errors.Is(err, model.ErrBookIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookDeleted})

@@ -24,11 +24,11 @@ func (s *Server) setupRoutes() {
 	s.App.PATCH("/book/:id", s.handler.UpdateBook)
 	s.App.DELETE("/book/:id", s.handler.DeleteBook)
 
-	s.App.POST("/book/borrow", s.handler.CreateBookBorrow)
-	s.App.GET("/book/borrow/:id", s.handler.GetBookBorrow)
-	s.App.PATCH("/book/borrow/:id", s.handler.UpdateBookBorrow)
-	s.App.DELETE("/book/borrow/:id", s.handler.DeleteBookBorrow)
+	s.App.POST("/borrow", s.handler.CreateBookBorrow)
+	s.App.GET("/borrow/:id", s.handler.GetBookBorrow)
+	s.App.PATCH("/borrow/:id", s.handler.UpdateBookBorrow)
+	s.App.DELETE("/borrow/:id", s.handler.DeleteBookBorrow)
 
-	// s.App.GET("/book/borrow/debtor/list", s.handler.ListBookBorrowDebtor)
-	// s.App.GET("/book/borrow/metric/list/:id", s.handler.ListBookBorrowMetric)
+	s.App.GET("/library/debtor/list", s.handler.ListBookBorrowDebtor)
+	s.App.GET("/library/metric/list/:id", s.handler.ListBookBorrowMetric)
 }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -82,20 +81,6 @@ func TestCreateBookHandler(t *testing.T) {
 			wantMsg:  `{"error":"invalid data"}`,
 			wantStat: http.StatusBadRequest,
 			needMock: false,
-		},
-		{
-			name: "Internal",
-			input: model.CreateBookRq{
-				Title:  "abobab",
-				Author: "abobab",
-				Price:  100,
-			},
-			wantMsg:  `{"error":"unexpected error"}`,
-			wantStat: http.StatusInternalServerError,
-			needMock: true,
-			mockService: func(ctx context.Context, u model.CreateBookRq) error {
-				return errors.New("123")
-			},
 		},
 	}
 

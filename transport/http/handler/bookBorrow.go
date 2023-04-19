@@ -22,7 +22,7 @@ import (
 // @Success 201 {object} MsgEnvelope "record created"
 // @Failure 400 {object} ErrEnvelope "bad request"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Router /book/borrow [post]
+// @Router /borrow [post]
 func (h *Manager) CreateBookBorrow(c echo.Context) error {
 	var input model.CreateBookBorrowRq
 
@@ -42,7 +42,7 @@ func (h *Manager) CreateBookBorrow(c echo.Context) error {
 	if errors.Is(err, model.ErrUserIsNotExist) || errors.Is(err, model.ErrBookIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, MsgEnvelope{model.StatusBookBorrowCreated})
@@ -60,7 +60,7 @@ func (h *Manager) CreateBookBorrow(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Router /book/borrow/{id} [get]
+// @Router /borrow/{id} [get]
 func (h *Manager) GetBookBorrow(c echo.Context) error {
 	input := struct {
 		ID int `param:"id" validate:"required,min=1"`
@@ -81,7 +81,7 @@ func (h *Manager) GetBookBorrow(c echo.Context) error {
 	if errors.Is(err, model.ErrBookBorrowIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusFound, record)
@@ -100,7 +100,7 @@ func (h *Manager) GetBookBorrow(c echo.Context) error {
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 409 {object} ErrEnvelope "edit conflict"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Router /book/borrow/{id} [patch]
+// @Router /borrow/{id} [patch]
 func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 	var input model.UpdateBookBorrowRq
 
@@ -121,7 +121,7 @@ func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 	} else if errors.Is(err, model.ErrBookBorrowIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookBorrowUpdated})
@@ -138,7 +138,7 @@ func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 // @Failure 401 {object} ErrEnvelope "missing or malformed jwt"
 // @Failure 404 {object} ErrEnvelope "record is not exist"
 // @Failure 500 {object} ErrEnvelope "internal server error"
-// @Router /book/borrow/{id} [delete]
+// @Router /borrow/{id} [delete]
 func (h *Manager) DeleteBookBorrow(c echo.Context) error {
 	input := struct {
 		ID int `param:"id" validate:"required,min=1"`
@@ -159,7 +159,7 @@ func (h *Manager) DeleteBookBorrow(c echo.Context) error {
 	if errors.Is(err, model.ErrBookBorrowIsNotExist) {
 		return c.JSON(http.StatusNotFound, ErrEnvelope{err.Error()})
 	} else if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrEnvelope{model.ErrInternalServerError.Error()})
+		return c.JSON(http.StatusInternalServerError, ErrEnvelope{err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, MsgEnvelope{model.StatusBookBorrowDeleted})
