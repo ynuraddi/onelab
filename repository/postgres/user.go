@@ -37,7 +37,7 @@ func (r *userRepository) Create(ctx context.Context, u model.CreateUserRq) error
 
 	// WARNING почему то не хэндлиться ошибка
 	// костыль
-	if errors.Is(err, gorm.ErrDuplicatedKey) || strings.Contains(err.Error(), "duplicate key value") {
+	if errors.Is(err, gorm.ErrDuplicatedKey) || err != nil && strings.Contains(err.Error(), "duplicate key value") {
 		return fmt.Errorf(userRepositoryPath, model.ErrUserIsAlreadyExist)
 	} else if err != nil {
 		return fmt.Errorf(userRepositoryPath, err)

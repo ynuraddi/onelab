@@ -29,6 +29,9 @@ func (s *Server) setupRoutes() {
 	s.App.PATCH("/borrow/:id", s.handler.UpdateBookBorrow)
 	s.App.DELETE("/borrow/:id", s.handler.DeleteBookBorrow)
 
+	s.App.POST("/library", s.handler.LibraryBorrow, auth)
+	s.App.PATCH("/library", s.handler.LibraryReturn, auth)
+
 	s.App.GET("/library/debtor/list", s.handler.ListBookBorrowDebtor)
 	s.App.GET("/library/metric/list/:id", s.handler.ListBookBorrowMetric)
 }

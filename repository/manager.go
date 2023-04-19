@@ -29,10 +29,12 @@ type IBookRepository interface {
 }
 
 type IBookBorrowRepository interface {
-	Create(ctx context.Context, record model.CreateBookBorrowRq) error
+	Create(ctx context.Context, record model.CreateBookBorrowRepo) error
 	Get(ctx context.Context, id int) (model.BookBorrow, error)
 	Update(ctx context.Context, record model.BookBorrow) error
 	Delete(ctx context.Context, id int) error
+
+	GetByUserBook(ctx context.Context, userID, bookID int) (model.BookBorrow, error)
 
 	ListDebtors(ctx context.Context) ([]*model.LibraryDebtor, error)
 	ListMetric(ctx context.Context, month int) ([]*model.LibraryMetricRepo, error)

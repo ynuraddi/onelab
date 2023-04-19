@@ -13,12 +13,12 @@ import (
 )
 
 // CreateBookBorrow godoc
-// @Summary Create a new book borrow
+// @Summary CreateBookBorrow
 // @Description Create a new book borrow with the input payload
 // @Tags book_borrow
 // @Accept json
 // @Produce json
-// @Param input body model.CreateBookBorrowRq true "Book borrow information time:2020-04-17T18:25:43.511Z"
+// @Param input body model.CreateBookBorrowRq true "Book borrow information TIME-FROMAT:2020-04-04;"
 // @Success 201 {object} MsgEnvelope "record created"
 // @Failure 400 {object} ErrEnvelope "bad request"
 // @Failure 500 {object} ErrEnvelope "internal server error"
@@ -49,7 +49,7 @@ func (h *Manager) CreateBookBorrow(c echo.Context) error {
 }
 
 // GetBookBorrow godoc
-// @Summary Get Borrow record by id
+// @Summary GetBookBorrow
 // @Description	Get borrow record by id in query param
 // @Tags book_borrow
 // @Accept json
@@ -88,7 +88,8 @@ func (h *Manager) GetBookBorrow(c echo.Context) error {
 }
 
 // UpdateBookBorrow godoc
-// @Summary Update book borrow by id
+// @Summary UpdateBookBorrow
+// @Description	Update borrow record by id in query param
 // @Tags book_borrow
 // @Accept json
 // @Produce json
@@ -128,7 +129,8 @@ func (h *Manager) UpdateBookBorrow(c echo.Context) error {
 }
 
 // DeleteBookBorrow godoc
-// @Summary Delete book borrow record by id
+// @Summary DeleteBookBorrow
+// @Description	Delete borrow record by id in query param
 // @Tags book_borrow
 // @Accept json
 // @Produce json

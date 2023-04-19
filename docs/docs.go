@@ -28,7 +28,7 @@ const docTemplate = `{
                 "tags": [
                     "book"
                 ],
-                "summary": "Create a new book",
+                "summary": "CreateBook",
                 "parameters": [
                     {
                         "description": "Book information",
@@ -80,7 +80,6 @@ const docTemplate = `{
                 "tags": [
                     "book"
                 ],
-                "summary": "Get book by id",
                 "parameters": [
                     {
                         "type": "integer",
@@ -133,7 +132,7 @@ const docTemplate = `{
                 "tags": [
                     "book"
                 ],
-                "summary": "Delete book by id",
+                "summary": "DeleteBook",
                 "parameters": [
                     {
                         "type": "integer",
@@ -177,6 +176,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "description": "Update book by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -186,7 +186,7 @@ const docTemplate = `{
                 "tags": [
                     "book"
                 ],
-                "summary": "Update book by id",
+                "summary": "UpdateBook",
                 "parameters": [
                     {
                         "type": "integer",
@@ -256,10 +256,10 @@ const docTemplate = `{
                 "tags": [
                     "book_borrow"
                 ],
-                "summary": "Create a new book borrow",
+                "summary": "CreateBookBorrow",
                 "parameters": [
                     {
-                        "description": "Book borrow information time:2020-04-17T18:25:43.511Z",
+                        "description": "Book borrow information TIME-FROMAT:2020-04-04;",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -302,7 +302,7 @@ const docTemplate = `{
                 "tags": [
                     "book_borrow"
                 ],
-                "summary": "Get Borrow record by id",
+                "summary": "GetBookBorrow",
                 "parameters": [
                     {
                         "type": "integer",
@@ -346,6 +346,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "description": "Delete borrow record by id in query param",
                 "consumes": [
                     "application/json"
                 ],
@@ -355,7 +356,7 @@ const docTemplate = `{
                 "tags": [
                     "book_borrow"
                 ],
-                "summary": "Delete book borrow record by id",
+                "summary": "DeleteBookBorrow",
                 "parameters": [
                     {
                         "type": "integer",
@@ -399,6 +400,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "description": "Update borrow record by id in query param",
                 "consumes": [
                     "application/json"
                 ],
@@ -408,7 +410,7 @@ const docTemplate = `{
                 "tags": [
                     "book_borrow"
                 ],
-                "summary": "Update book borrow by id",
+                "summary": "UpdateBookBorrow",
                 "parameters": [
                     {
                         "type": "integer",
@@ -466,6 +468,118 @@ const docTemplate = `{
                 }
             }
         },
+        "/library": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create library record to book_borrow",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "library"
+                ],
+                "summary": "LibraryBorrow",
+                "parameters": [
+                    {
+                        "description": "Rent book, you can specify the rental time in order to view the metric more conveniently TIME-FROMAT:",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LibraryBorrowRq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "record created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.MsgEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Return book to library, return day is today",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "library"
+                ],
+                "summary": "LibraryReturn",
+                "parameters": [
+                    {
+                        "description": "Rent book, you can specify the rental time in order to view the metric more conveniently TIME-FROMAT:2020-04-04",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LibraryBorrowRq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "record updated",
+                        "schema": {
+                            "$ref": "#/definitions/handler.MsgEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            }
+        },
         "/library/debtor/list": {
             "get": {
                 "description": "List library debtor record",
@@ -478,7 +592,7 @@ const docTemplate = `{
                 "tags": [
                     "library"
                 ],
-                "summary": "List library debtors",
+                "summary": "ListBookBorrowDebtor",
                 "responses": {
                     "302": {
                         "description": "Found",
@@ -522,7 +636,7 @@ const docTemplate = `{
                 "tags": [
                     "library"
                 ],
-                "summary": "List library metric",
+                "summary": "ListBookBorrowMetric",
                 "parameters": [
                     {
                         "type": "integer",
@@ -581,7 +695,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Login user",
+                "summary": "LoginUser",
                 "parameters": [
                     {
                         "description": "User login input",
@@ -633,7 +747,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Create a new user",
+                "summary": "CreateUser",
                 "parameters": [
                     {
                         "description": "User information",
@@ -690,7 +804,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Get user by id",
+                "summary": "GetUser",
                 "parameters": [
                     {
                         "type": "integer",
@@ -739,6 +853,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Delete user by id in query param",
                 "consumes": [
                     "application/json"
                 ],
@@ -748,7 +863,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Delete user by id",
+                "summary": "DeleteUser",
                 "parameters": [
                     {
                         "type": "integer",
@@ -797,6 +912,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Update user by id in query param",
                 "consumes": [
                     "application/json"
                 ],
@@ -806,7 +922,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Update user by id",
+                "summary": "UpdateUser",
                 "parameters": [
                     {
                         "type": "integer",
@@ -988,6 +1104,21 @@ const docTemplate = `{
                     "minLength": 5
                 },
                 "user_name": {
+                    "type": "string",
+                    "minLength": 5
+                }
+            }
+        },
+        "model.LibraryBorrowRq": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "borrow_date": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string",
                     "minLength": 5
                 }

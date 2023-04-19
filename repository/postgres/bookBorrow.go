@@ -22,7 +22,7 @@ func NewBookBorrowRepository(db *gorm.DB) *bookBorrowRepository {
 
 const bookBorrowRepositoryPath = `bookBorrowRepository: %w`
 
-func (r *bookBorrowRepository) Create(ctx context.Context, record model.CreateBookBorrowRq) error {
+func (r *bookBorrowRepository) Create(ctx context.Context, record model.CreateBookBorrowRepo) error {
 	if err := r.db.WithContext(ctx).
 		Select("uuid", "book_id", "user_id", "borrow_date", "version").
 		Create(&model.BookBorrow{
@@ -109,6 +109,20 @@ func (r *bookBorrowRepository) ListMetric(ctx context.Context, month int) (metri
 	}
 
 	return metric, nil
+}
+
+func (r *bookBorrowRepository) GetByUserBook(ctx context.Context, userID, bookID int) (b model.BookBorrow, err error) {
+	err = r.db.WithContext(ctx).
+		Model(model.BookBorrow{}).
+		Where("user_id = ? and book_id = ?", userID, bookID).
+		First(&b).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return b, fmt.Errorf(bookBorrowRepositoryPath, model.ErrBookBorrowIsNotExist)
+	} else if err != nil {
+		return b, fmt.Errorf(bookBorrowRepositoryPath, err)
+	}
+
+	return b, nil
 }
 
 // func (r *bookBorrowRepository) ListDebtors(ctx context.Context) (debtors []*model.BookBorrowDebtorRp, err error) {

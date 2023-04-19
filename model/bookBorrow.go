@@ -17,10 +17,17 @@ func (BookBorrow) TableName() string {
 }
 
 type CreateBookBorrowRq struct {
-	UUID       string    `json:"-"           gorm:"column:uuid"                                 `
-	BookID     int       `json:"book_id"     gorm:"column:book_id"     validate:"required,min=1"`
-	UserID     int       `json:"user_id"     gorm:"column:user_id"     validate:"required,min=1"`
-	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date" validate:"required"      `
+	UUID       string `json:"-"                                     `
+	BookID     int    `json:"book_id"      validate:"required,min=1"`
+	UserID     int    `json:"user_id"      validate:"required,min=1"`
+	BorrowDate string `json:"borrow_date"  validate:"required"      `
+}
+
+type CreateBookBorrowRepo struct {
+	UUID       string    `gorm:"column:uuid"`
+	BookID     int       `gorm:"column:book_id"`
+	UserID     int       `gorm:"column:user_id"`
+	BorrowDate time.Time `gorm:"column:borrow_date"`
 }
 
 type UpdateBookBorrowRq struct {

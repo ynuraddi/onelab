@@ -14,7 +14,7 @@ import (
 // const handlerUserPath = `handlerUser: %s`
 
 // LoginUser godoc
-// @Summary Login user
+// @Summary LoginUser
 // @Description Login user
 // @Tags user
 // @Accept json
@@ -57,7 +57,7 @@ func (h *Manager) LoginUser(c echo.Context) error {
 }
 
 // CreateUser godoc
-// @Summary Create a new user
+// @Summary CreateUser
 // @Description Create a new user with the input payload
 // @Tags user
 // @Accept json
@@ -94,7 +94,7 @@ func (h *Manager) CreateUser(c echo.Context) error {
 }
 
 // GetUser godoc
-// @Summary Get user by id
+// @Summary GetUser
 // @Description	Get user by id in query param
 // @Tags user
 // @Accept json
@@ -136,7 +136,8 @@ func (h *Manager) GetUser(c echo.Context) error {
 }
 
 // UpdateUser godoc
-// @Summary Update user by id
+// @Summary UpdateUser
+// @Description	Update user by id in query param
 // @Tags user
 // @Accept json
 // @Produce json
@@ -179,7 +180,8 @@ func (h *Manager) UpdateUser(c echo.Context) error {
 }
 
 // DeleteUser godoc
-// @Summary Delete user by id
+// @Summary DeleteUser
+// @Description	Delete user by id in query param
 // @Tags user
 // @Accept json
 // @Produce json

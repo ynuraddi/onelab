@@ -36,13 +36,15 @@ type IBookBorrowService interface {
 	Update(ctx context.Context, record model.UpdateBookBorrowRq) error
 	Delete(ctx context.Context, id int) error
 
-	GetDebtors(ctx context.Context) ([]*model.LibraryDebtor, error)
-	GetMetric(ctx context.Context, month int) ([]*model.LibraryMetric, error)
+	GetByUserBook(ctx context.Context, userID, bookID int) (model.BookBorrow, error)
+
+	ListDebtors(ctx context.Context) ([]*model.LibraryDebtor, error)
+	ListMetric(ctx context.Context, month int) ([]*model.LibraryMetric, error)
 }
 
 type ILibraryService interface {
 	BorrowBook(ctx context.Context, record model.LibraryBorrowRq) (model.LibraryBorrowRp, error)
-	ReturnBook(ctx context.Context)
+	ReturnBook(ctx context.Context, record model.LibraryReturnRq) error
 
 	ListDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error)
 	ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error)
@@ -65,9 +67,9 @@ type Manager struct {
 func NewService(conf *config.Config, repo *repository.Manager) *Manager {
 	userS := NewUserService(repo.User)
 	bookS := NewBookService(repo.Book)
-	borrS := NewBookBorrowService(repo.BookBorrow, userS, bookS)
+	borrS := NewBookBorrowService(repo.BookBorrow, bookS)
 	tranS := NewTransactionService(conf)
-	librS := NewLibraryService(borrS, userS, bookS)
+	librS := NewLibraryService(borrS, userS, bookS, tranS)
 
 	return &Manager{
 		User:       userS,

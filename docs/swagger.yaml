@@ -87,6 +87,16 @@ definitions:
     - password
     - user_name
     type: object
+  model.LibraryBorrowRq:
+    properties:
+      borrow_date:
+        type: string
+      title:
+        minLength: 5
+        type: string
+    required:
+    - title
+    type: object
   model.LibraryDebtor:
     properties:
       book_id:
@@ -201,7 +211,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Create a new book
+      summary: CreateBook
       tags:
       - book
   /book/{id}:
@@ -237,7 +247,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Delete book by id
+      summary: DeleteBook
       tags:
       - book
     get:
@@ -273,12 +283,12 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Get book by id
       tags:
       - book
     patch:
       consumes:
       - application/json
+      description: Update book by id
       parameters:
       - description: Book ID
         in: path
@@ -317,7 +327,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Update book by id
+      summary: UpdateBook
       tags:
       - book
   /borrow:
@@ -326,7 +336,7 @@ paths:
       - application/json
       description: Create a new book borrow with the input payload
       parameters:
-      - description: Book borrow information time:2020-04-17T18:25:43.511Z
+      - description: Book borrow information TIME-FROMAT:2020-04-04;
         in: body
         name: input
         required: true
@@ -347,13 +357,14 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Create a new book borrow
+      summary: CreateBookBorrow
       tags:
       - book_borrow
   /borrow/{id}:
     delete:
       consumes:
       - application/json
+      description: Delete borrow record by id in query param
       parameters:
       - description: BookBorrow ID
         in: path
@@ -383,7 +394,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Delete book borrow record by id
+      summary: DeleteBookBorrow
       tags:
       - book_borrow
     get:
@@ -419,12 +430,13 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Get Borrow record by id
+      summary: GetBookBorrow
       tags:
       - book_borrow
     patch:
       consumes:
       - application/json
+      description: Update borrow record by id in query param
       parameters:
       - description: BookBorrow ID
         in: path
@@ -463,9 +475,82 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Update book borrow by id
+      summary: UpdateBookBorrow
       tags:
       - book_borrow
+  /library:
+    patch:
+      consumes:
+      - application/json
+      description: Return book to library, return day is today
+      parameters:
+      - description: Rent book, you can specify the rental time in order to view the
+          metric more conveniently TIME-FROMAT:2020-04-04
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.LibraryBorrowRq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: record updated
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: LibraryReturn
+      tags:
+      - library
+    post:
+      consumes:
+      - application/json
+      description: Create library record to book_borrow
+      parameters:
+      - description: 'Rent book, you can specify the rental time in order to view
+          the metric more conveniently TIME-FROMAT:'
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.LibraryBorrowRq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: record created
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      security:
+      - ApiKeyAuth: []
+      summary: LibraryBorrow
+      tags:
+      - library
   /library/debtor/list:
     get:
       consumes:
@@ -492,7 +577,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: List library debtors
+      summary: ListBookBorrowDebtor
       tags:
       - library
   /library/metric/list/{id}:
@@ -531,7 +616,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: List library metric
+      summary: ListBookBorrowMetric
       tags:
       - library
   /login:
@@ -565,7 +650,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Login user
+      summary: LoginUser
       tags:
       - user
   /user:
@@ -599,13 +684,14 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/handler.ErrEnvelope'
-      summary: Create a new user
+      summary: CreateUser
       tags:
       - user
   /user/{id}:
     delete:
       consumes:
       - application/json
+      description: Delete user by id in query param
       parameters:
       - description: User ID
         in: path
@@ -637,7 +723,7 @@ paths:
             $ref: '#/definitions/handler.ErrEnvelope'
       security:
       - ApiKeyAuth: []
-      summary: Delete user by id
+      summary: DeleteUser
       tags:
       - user
     get:
@@ -675,12 +761,13 @@ paths:
             $ref: '#/definitions/handler.ErrEnvelope'
       security:
       - ApiKeyAuth: []
-      summary: Get user by id
+      summary: GetUser
       tags:
       - user
     patch:
       consumes:
       - application/json
+      description: Update user by id in query param
       parameters:
       - description: User ID
         in: path
@@ -721,7 +808,7 @@ paths:
             $ref: '#/definitions/handler.ErrEnvelope'
       security:
       - ApiKeyAuth: []
-      summary: Update user by id
+      summary: UpdateUser
       tags:
       - user
 securityDefinitions:

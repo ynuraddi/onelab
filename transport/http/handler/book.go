@@ -12,7 +12,7 @@ import (
 )
 
 // CreateBook godoc
-// @Summary Create a new book
+// @Summary CreateBook
 // @Description Create a new book with the input payload
 // @Tags book
 // @Accept json
@@ -48,7 +48,7 @@ func (h *Manager) CreateBook(c echo.Context) error {
 }
 
 // GetBook godoc
-// @Summary Get book by id
+// @SummaryGetBook
 // @Description	Get book by id in query param
 // @Tags book
 // @Accept json
@@ -87,7 +87,8 @@ func (h *Manager) GetBook(c echo.Context) error {
 }
 
 // UpdateBook godoc
-// @Summary Update book by id
+// @Summary UpdateBook
+// @Description	Update book by id
 // @Tags book
 // @Accept json
 // @Produce json
@@ -127,7 +128,7 @@ func (h *Manager) UpdateBook(c echo.Context) error {
 }
 
 // DeleteBook godoc
-// @Summary Delete book by id
+// @Summary DeleteBook
 // @Tags book
 // @Accept json
 // @Produce json

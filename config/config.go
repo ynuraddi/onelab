@@ -24,7 +24,7 @@ type Config struct {
 	}
 
 	Transaction struct {
-		BaseURL string `env:"TR_URL" env-default:"localhost:8081"`
+		BaseURL string `env:"TR_URL" env-default:"http://localhost:8081"`
 	}
 }
 

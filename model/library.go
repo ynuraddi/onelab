@@ -5,9 +5,9 @@ import (
 )
 
 type LibraryBorrowRq struct {
-	UserLogin string `json:"-"`
-	BookTitle string `json:"title" validate:"required,min=5"`
-	RentTerm  int    `json:"rent_term" validate:"required,min=1"`
+	UserLogin  string `json:"-"`
+	BookTitle  string `json:"title" validate:"required,min=5"`
+	BorrowDate string `json:"borrow_date"`
 }
 
 type LibraryBorrowRp struct {
@@ -16,7 +16,7 @@ type LibraryBorrowRp struct {
 }
 
 type LibraryReturnRq struct {
-	UserLogin string `json:"login" validate:"required"`
+	UserLogin string `json:"-" validate:"required"`
 	BookTitle string `json:"title" validate:"required"`
 }
 

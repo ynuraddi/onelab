@@ -15,11 +15,12 @@ type libraryService struct {
 	tranS ITransactionService
 }
 
-func NewLibraryService(bbs IBookBorrowService, us IUserService, bs IBookService) *libraryService {
+func NewLibraryService(bbs IBookBorrowService, us IUserService, bs IBookService, trs ITransactionService) *libraryService {
 	return &libraryService{
 		borrS: bbs,
 		userS: us,
 		bookS: bs,
+		tranS: trs,
 	}
 }
 
@@ -30,28 +31,27 @@ func (s *libraryService) BorrowBook(ctx context.Context, record model.LibraryBor
 	if err != nil {
 		return rp, fmt.Errorf(libraryServicePath, err)
 	}
-
 	user, err := s.userS.GetByLogin(ctx, record.UserLogin)
 	if err != nil {
 		return rp, fmt.Errorf(libraryServicePath, err)
 	}
 
-	amount := record.RentTerm * book.Price
-
 	uuid, err := s.tranS.Create(ctx, model.CreateTransactionRq{
 		UserID: user.ID,
 		BookID: book.ID,
-		Amount: amount,
+		Amount: book.Price,
 	})
 	if err != nil {
 		return model.LibraryBorrowRp{}, fmt.Errorf(libraryServicePath, err)
 	}
+	rp.TransactionUUID = uuid.UUID
+	rp.Score = uuid.Amount
 
 	if err := s.borrS.Create(ctx, model.CreateBookBorrowRq{
 		UUID:       uuid.UUID,
 		BookID:     book.ID,
 		UserID:     user.ID,
-		BorrowDate: time.Now(),
+		BorrowDate: record.BorrowDate,
 	}); err != nil {
 		if err = s.tranS.Rollback(ctx, model.RollbackTransactionRq{UUID: uuid.UUID}); err != nil {
 			return rp, fmt.Errorf(libraryServicePath, err)
@@ -62,10 +62,35 @@ func (s *libraryService) BorrowBook(ctx context.Context, record model.LibraryBor
 
 	return rp, nil
 }
-func (s *libraryService) ReturnBook(ctx context.Context) {}
+
+func (s *libraryService) ReturnBook(ctx context.Context, record model.LibraryReturnRq) error {
+	book, err := s.bookS.GetByTitle(ctx, record.BookTitle)
+	if err != nil {
+		return fmt.Errorf(libraryServicePath, err)
+	}
+
+	user, err := s.userS.GetByLogin(ctx, record.UserLogin)
+	if err != nil {
+		return fmt.Errorf(libraryServicePath, err)
+	}
+
+	borrowRecord, err := s.borrS.GetByUserBook(ctx, user.ID, book.ID)
+	if err != nil {
+		return fmt.Errorf(libraryServicePath, err)
+	}
+
+	if err := s.borrS.Update(ctx, model.UpdateBookBorrowRq{
+		ID:         borrowRecord.ID,
+		ReturnDate: time.Now(),
+	}); err != nil {
+		return fmt.Errorf(libraryServicePath, err)
+	}
+
+	return nil
+}
 
 func (s *libraryService) ListDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
-	debtors, err = s.borrS.GetDebtors(ctx)
+	debtors, err = s.borrS.ListDebtors(ctx)
 	if err != nil {
 		return debtors, fmt.Errorf(libraryServicePath, err)
 	}
@@ -76,7 +101,7 @@ func (s *libraryService) ListDebtors(ctx context.Context) (debtors []*model.Libr
 			return debtors, fmt.Errorf(libraryServicePath, err)
 		}
 
-		book, err := s.bookS.Get(ctx, debtors[i].UserID)
+		book, err := s.bookS.Get(ctx, debtors[i].BookID)
 		if err != nil {
 			return debtors, fmt.Errorf(libraryServicePath, err)
 		}
@@ -89,7 +114,7 @@ func (s *libraryService) ListDebtors(ctx context.Context) (debtors []*model.Libr
 }
 
 func (s *libraryService) ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
-	metric, err = s.borrS.GetMetric(ctx, month)
+	metric, err = s.borrS.ListMetric(ctx, month)
 	if err != nil {
 		return metric, fmt.Errorf(libraryServicePath, err)
 	}
