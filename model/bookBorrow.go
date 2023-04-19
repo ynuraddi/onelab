@@ -3,12 +3,12 @@ package model
 import "time"
 
 type BookBorrow struct {
-	ID         int       `json:"borrow_id"   gorm:"column:id"          param:"id" validate:"required,min=1"`
+	ID         int       `json:"borrow_id"   gorm:"column:id"          `
 	BookID     int       `json:"book_id"     gorm:"column:book_id"     `
 	UserID     int       `json:"user_id"     gorm:"column:user_id"     `
 	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date" `
 	ReturnDate time.Time `json:"return_date" gorm:"column:return_date" `
-	Version    int       `json:"version"     gorm:"column:version" `
+	Version    int       `json:"version"     gorm:"column:version"     `
 }
 
 func (BookBorrow) TableName() string {
@@ -18,7 +18,7 @@ func (BookBorrow) TableName() string {
 type CreateBookBorrowRq struct {
 	BookID     int       `json:"book_id"     gorm:"column:book_id"     validate:"required,min=1"`
 	UserID     int       `json:"user_id"     gorm:"column:user_id"     validate:"required,min=1"`
-	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date" validate:"required"`
+	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date" validate:"required"      `
 }
 
 type UpdateBookBorrowRq struct {

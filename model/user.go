@@ -1,12 +1,12 @@
 package model
 
 type User struct {
-	ID       int    `json:"id"        gorm:"column:id"       param:"id" validate:"required,min=1"`
+	ID       int    `json:"id"        gorm:"column:id"       `
 	Name     string `json:"user_name" gorm:"column:name"     `
 	Login    string `json:"login"     gorm:"column:login"    `
 	Password string `json:"-"         gorm:"column:password" `
 	IsActive bool   `json:"is_active" gorm:"column:is_active"`
-	Version  int    `json:"version"   gorm:"column:version"`
+	Version  int    `json:"version"   gorm:"column:version"  `
 }
 
 func (User) TableName() string {
