@@ -4,6 +4,7 @@ import "time"
 
 type BookBorrow struct {
 	ID         int       `json:"borrow_id"   gorm:"column:id"          `
+	UUID       string    `json:"uuid"        gorm:"column:uuid"        `
 	BookID     int       `json:"book_id"     gorm:"column:book_id"     `
 	UserID     int       `json:"user_id"     gorm:"column:user_id"     `
 	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date" `
@@ -16,6 +17,7 @@ func (BookBorrow) TableName() string {
 }
 
 type CreateBookBorrowRq struct {
+	UUID       string    `json:"-"           gorm:"column:uuid"                                 `
 	BookID     int       `json:"book_id"     gorm:"column:book_id"     validate:"required,min=1"`
 	UserID     int       `json:"user_id"     gorm:"column:user_id"     validate:"required,min=1"`
 	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date" validate:"required"      `

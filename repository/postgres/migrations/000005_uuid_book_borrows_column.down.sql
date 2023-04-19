@@ -1,0 +1,1 @@
+alter table book_borrows drop column uuid;

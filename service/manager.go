@@ -38,6 +38,8 @@ type IBookBorrowHistory interface {
 	ListMetric(ctx context.Context, month int) (metric []*model.BookBorrowMetricRp, err error)
 }
 
+type ITransactionService interface{}
+
 type Manager struct {
 	User       IUserService
 	Book       IBookService

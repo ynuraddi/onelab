@@ -15,14 +15,13 @@ definitions:
       author:
         type: string
       id:
-        minimum: 1
+        type: integer
+      price:
         type: integer
       title:
         type: string
       version:
         type: integer
-    required:
-    - id
     type: object
   model.BookBorrow:
     properties:
@@ -31,16 +30,15 @@ definitions:
       borrow_date:
         type: string
       borrow_id:
-        minimum: 1
         type: integer
       return_date:
         type: string
       user_id:
         type: integer
+      uuid:
+        type: string
       version:
         type: integer
-    required:
-    - borrow_id
     type: object
   model.BookBorrowDebtorRp:
     properties:
@@ -86,11 +84,15 @@ definitions:
       author:
         minLength: 5
         type: string
+      price:
+        minimum: 100
+        type: integer
       title:
         minLength: 5
         type: string
     required:
     - author
+    - price
     - title
     type: object
   model.CreateUserRq:
@@ -149,7 +151,6 @@ definitions:
   model.User:
     properties:
       id:
-        minimum: 1
         type: integer
       is_active:
         type: boolean
@@ -159,8 +160,6 @@ definitions:
         type: string
       version:
         type: integer
-    required:
-    - id
     type: object
 host: localhost:8080
 info:

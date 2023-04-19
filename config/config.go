@@ -22,6 +22,11 @@ type Config struct {
 		Pass   string `env:"DB_PASSWORD" env-default:"onelab"`
 		DBName string `env:"DB_DATABASE" env-default:"onelab"`
 	}
+
+	Transaction struct {
+		Host string `env:"HOST" env-default:"localhost"`
+		Port string `env:"PORT" env-default:"8081"`
+	}
 }
 
 var (

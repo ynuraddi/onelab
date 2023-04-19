@@ -24,8 +24,9 @@ const bookBorrowRepositoryPath = `bookBorrowRepository: %w`
 
 func (r *bookBorrowRepository) Create(ctx context.Context, record model.CreateBookBorrowRq) error {
 	if err := r.db.WithContext(ctx).
-		Select("book_id", "user_id", "borrow_date").
+		Select("uuid", "book_id", "user_id", "borrow_date", "version").
 		Create(&model.BookBorrow{
+			UUID:       record.UUID,
 			BookID:     record.BookID,
 			UserID:     record.UserID,
 			BorrowDate: record.BorrowDate,

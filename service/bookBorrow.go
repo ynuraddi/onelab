@@ -7,6 +7,8 @@ import (
 
 	"app/model"
 	"app/repository"
+
+	"github.com/google/uuid"
 )
 
 type bookBorrowService struct {
@@ -38,6 +40,10 @@ func (s *bookBorrowService) Create(ctx context.Context, record model.CreateBookB
 
 	if record.BorrowDate == nilTime {
 		record.BorrowDate = time.Now()
+	}
+	record.UUID = uuid.New().String()
+	if record.UUID == "" {
+		return fmt.Errorf(bookBorrowServicePath, model.ErrInternalServerError)
 	}
 
 	if err := s.repo.Create(ctx, record); err != nil {

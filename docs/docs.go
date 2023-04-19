@@ -884,16 +884,15 @@ const docTemplate = `{
         },
         "model.Book": {
             "type": "object",
-            "required": [
-                "id"
-            ],
             "properties": {
                 "author": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer",
-                    "minimum": 1
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
@@ -905,9 +904,6 @@ const docTemplate = `{
         },
         "model.BookBorrow": {
             "type": "object",
-            "required": [
-                "borrow_id"
-            ],
             "properties": {
                 "book_id": {
                     "type": "integer"
@@ -916,14 +912,16 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "borrow_id": {
-                    "type": "integer",
-                    "minimum": 1
+                    "type": "integer"
                 },
                 "return_date": {
                     "type": "string"
                 },
                 "user_id": {
                     "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
                 },
                 "version": {
                     "type": "integer"
@@ -992,12 +990,17 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "author",
+                "price",
                 "title"
             ],
             "properties": {
                 "author": {
                     "type": "string",
                     "minLength": 5
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 100
                 },
                 "title": {
                     "type": "string",
@@ -1085,13 +1088,9 @@ const docTemplate = `{
         },
         "model.User": {
             "type": "object",
-            "required": [
-                "id"
-            ],
             "properties": {
                 "id": {
-                    "type": "integer",
-                    "minimum": 1
+                    "type": "integer"
                 },
                 "is_active": {
                     "type": "boolean"
