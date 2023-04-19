@@ -26,6 +26,8 @@ type IBookService interface {
 	Get(ctx context.Context, id int) (model.Book, error)
 	Update(ctx context.Context, book model.UpdateBookRq) error
 	Delete(ctx context.Context, id int) error
+
+	GetByTitle(ctx context.Context, title string) (model.Book, error)
 }
 
 type IBookBorrowService interface {
@@ -34,20 +36,21 @@ type IBookBorrowService interface {
 	Update(ctx context.Context, record model.UpdateBookBorrowRq) error
 	Delete(ctx context.Context, id int) error
 
-	GetDebtors(ctx context.Context) ([]*model.Debtor, error)
-	GetMetric(ctx context.Context, month int) ([]*model.Metric, error)
+	GetDebtors(ctx context.Context) ([]*model.LibraryDebtor, error)
+	GetMetric(ctx context.Context, month int) ([]*model.LibraryMetric, error)
 }
 
 type ILibraryService interface {
-	BorrowBook(ctx context.Context)
+	BorrowBook(ctx context.Context, record model.LibraryBorrowRq) (model.LibraryBorrowRp, error)
 	ReturnBook(ctx context.Context)
 
-	ListDebtors(ctx context.Context) (debtors []*model.Debtor, err error)
-	ListMetric(ctx context.Context, month int) (metric []*model.Metric, err error)
+	ListDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error)
+	ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error)
 }
 
 type ITransactionService interface {
-	Create(model.Transaction) error
+	Create(ctx context.Context, tr model.CreateTransactionRq) (model.CreateTransactionRp, error)
+	Pay(ctx context.Context, tr model.PayTransactionRq) error
 }
 
 type Manager struct {

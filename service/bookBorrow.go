@@ -7,8 +7,6 @@ import (
 
 	"app/model"
 	"app/repository"
-
-	"github.com/google/uuid"
 )
 
 type bookBorrowService struct {
@@ -41,12 +39,6 @@ func (s *bookBorrowService) Create(ctx context.Context, record model.CreateBookB
 	if record.BorrowDate == nilTime {
 		record.BorrowDate = time.Now()
 	}
-
-	uuid, err := s.uuidGenerator()
-	if err != nil {
-		return err
-	}
-	record.UUID = uuid
 
 	if err := s.repo.Create(ctx, record); err != nil {
 		return fmt.Errorf(bookBorrowServicePath, err)
@@ -100,7 +92,7 @@ func (s *bookBorrowService) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *bookBorrowService) GetDebtors(ctx context.Context) (debtors []*model.Debtor, err error) {
+func (s *bookBorrowService) GetDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
 	debtors, err = s.repo.GetDebtors(ctx)
 	if err != nil {
 		return debtors, fmt.Errorf(bookBorrowServicePath, err)
@@ -109,7 +101,7 @@ func (s *bookBorrowService) GetDebtors(ctx context.Context) (debtors []*model.De
 	return debtors, nil
 }
 
-func (s *bookBorrowService) GetMetric(ctx context.Context, month int) (metric []*model.Metric, err error) {
+func (s *bookBorrowService) GetMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
 	metric, err = s.repo.GetMetric(ctx, month)
 	if err != nil {
 		return metric, fmt.Errorf(bookBorrowServicePath, err)
@@ -133,12 +125,3 @@ func (s *bookBorrowService) GetMetric(ctx context.Context, month int) (metric []
 // 	}
 // 	return list, nil
 // }
-
-func (s *bookBorrowService) uuidGenerator() (string, error) {
-	UUID := uuid.New().String()
-	if UUID == "" {
-		return "", fmt.Errorf(bookBorrowServicePath, model.ErrInternalServerError)
-	}
-
-	return UUID, nil
-}

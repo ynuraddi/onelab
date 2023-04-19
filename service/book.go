@@ -64,3 +64,12 @@ func (s *bookService) Delete(ctx context.Context, id int) error {
 	}
 	return nil
 }
+
+func (s *bookService) GetByTitle(ctx context.Context, title string) (model.Book, error) {
+	u, err := s.repo.GetByTitle(ctx, title)
+	if err != nil {
+		return u, fmt.Errorf(bookServicePath, err)
+	}
+
+	return u, nil
+}

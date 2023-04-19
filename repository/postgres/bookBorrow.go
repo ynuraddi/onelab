@@ -80,7 +80,7 @@ func (r *bookBorrowRepository) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r *bookBorrowRepository) GetDebtors(ctx context.Context) (debtors []*model.Debtor, err error) {
+func (r *bookBorrowRepository) GetDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
 	err = r.db.WithContext(ctx).Model(&model.BookBorrow{}).Where("return_date is null").Find(&debtors).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, gorm.ErrEmptySlice) {
 		return debtors, fmt.Errorf(bookBorrowRepositoryPath, err)
@@ -91,7 +91,7 @@ func (r *bookBorrowRepository) GetDebtors(ctx context.Context) (debtors []*model
 	return debtors, nil
 }
 
-func (r *bookBorrowRepository) GetMetric(ctx context.Context, month int) (metric []*model.Metric, err error) {
+func (r *bookBorrowRepository) GetMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
 	err = r.db.WithContext(ctx).Model(&model.BookBorrow{}).
 		Select("user_id, array_agg(title) as books").
 		Where("extract(month from borrow_date) = ?", month).

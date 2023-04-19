@@ -75,3 +75,15 @@ func (r *bookRepository) Delete(ctx context.Context, id int) error {
 
 	return nil
 }
+
+func (r *bookRepository) GetByTitle(ctx context.Context, title string) (b model.Book, err error) {
+	err = r.db.WithContext(ctx).
+		Model(&model.Book{}).
+		Where("title = ?", title).
+		First(&b).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return b, fmt.Errorf(bookRepositoryPath, model.ErrBookIsNotExist)
+	}
+
+	return b, err
+}
