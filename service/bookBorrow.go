@@ -41,10 +41,12 @@ func (s *bookBorrowService) Create(ctx context.Context, record model.CreateBookB
 	if record.BorrowDate == nilTime {
 		record.BorrowDate = time.Now()
 	}
-	record.UUID = uuid.New().String()
-	if record.UUID == "" {
-		return fmt.Errorf(bookBorrowServicePath, model.ErrInternalServerError)
+
+	uuid, err := s.uuidGenerator()
+	if err != nil {
+		return err
 	}
+	record.UUID = uuid
 
 	if err := s.repo.Create(ctx, record); err != nil {
 		return fmt.Errorf(bookBorrowServicePath, err)
@@ -98,18 +100,45 @@ func (s *bookBorrowService) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *bookBorrowService) ListDebtors(ctx context.Context) (debtors []*model.BookBorrowDebtorRp, err error) {
-	list, err := s.repo.ListDebtors(ctx)
+func (s *bookBorrowService) GetDebtors(ctx context.Context) (debtors []*model.Debtor, err error) {
+	debtors, err = s.repo.GetDebtors(ctx)
 	if err != nil {
-		return nil, fmt.Errorf(bookBorrowServicePath, err)
+		return debtors, fmt.Errorf(bookBorrowServicePath, err)
 	}
-	return list, nil
+
+	return debtors, nil
 }
 
-func (s *bookBorrowService) ListMetric(ctx context.Context, month int) (metric []*model.BookBorrowMetricRp, err error) {
-	list, err := s.repo.ListMetric(ctx, month)
+func (s *bookBorrowService) GetMetric(ctx context.Context, month int) (metric []*model.Metric, err error) {
+	metric, err = s.repo.GetMetric(ctx, month)
 	if err != nil {
-		return nil, fmt.Errorf(bookBorrowServicePath, err)
+		return metric, fmt.Errorf(bookBorrowServicePath, err)
 	}
-	return list, nil
+
+	return metric, nil
+}
+
+// func (s *bookBorrowService) ListDebtors(ctx context.Context) (debtors []*model.BookBorrowDebtorRp, err error) {
+// 	list, err := s.repo.ListDebtors(ctx)
+// 	if err != nil {
+// 		return nil, fmt.Errorf(bookBorrowServicePath, err)
+// 	}
+// 	return list, nil
+// }
+
+// func (s *bookBorrowService) ListMetric(ctx context.Context, month int) (metric []*model.BookBorrowMetricRp, err error) {
+// 	list, err := s.repo.ListMetric(ctx, month)
+// 	if err != nil {
+// 		return nil, fmt.Errorf(bookBorrowServicePath, err)
+// 	}
+// 	return list, nil
+// }
+
+func (s *bookBorrowService) uuidGenerator() (string, error) {
+	UUID := uuid.New().String()
+	if UUID == "" {
+		return "", fmt.Errorf(bookBorrowServicePath, model.ErrInternalServerError)
+	}
+
+	return UUID, nil
 }

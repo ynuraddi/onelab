@@ -1,1 +1,1 @@
-alter table book_borrows drop column uuid;
+alter table book_borrows drop column if exists uuid;

@@ -32,8 +32,8 @@ type IBookBorrowRepository interface {
 	Update(ctx context.Context, record model.BookBorrow) error
 	Delete(ctx context.Context, id int) error
 
-	ListDebtors(ctx context.Context) (debtors []*model.BookBorrowDebtorRp, err error)
-	ListMetric(ctx context.Context, month int) (metric []*model.BookBorrowMetricRp, err error)
+	GetDebtors(ctx context.Context) ([]*model.Debtor, error)
+	GetMetric(ctx context.Context, month int) ([]*model.Metric, error)
 }
 
 type Manager struct {

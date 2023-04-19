@@ -28,32 +28,42 @@ type IBookService interface {
 	Delete(ctx context.Context, id int) error
 }
 
-type IBookBorrowHistory interface {
+type IBookBorrowService interface {
 	Create(ctx context.Context, record model.CreateBookBorrowRq) error
 	Get(ctx context.Context, id int) (model.BookBorrow, error)
 	Update(ctx context.Context, record model.UpdateBookBorrowRq) error
 	Delete(ctx context.Context, id int) error
 
-	ListDebtors(ctx context.Context) (debtors []*model.BookBorrowDebtorRp, err error)
-	ListMetric(ctx context.Context, month int) (metric []*model.BookBorrowMetricRp, err error)
+	GetDebtors(ctx context.Context) ([]*model.Debtor, error)
+	GetMetric(ctx context.Context, month int) ([]*model.Metric, error)
 }
 
-type ITransactionService interface{}
+type ILibraryService interface {
+	BorrowBook(ctx context.Context)
+	ReturnBook(ctx context.Context)
+
+	ListDebtors(ctx context.Context) (debtors []*model.Debtor, err error)
+	ListMetric(ctx context.Context, month int) (metric []*model.Metric, err error)
+}
+
+type ITransactionService interface {
+	Create(model.Transaction) error
+}
 
 type Manager struct {
 	User       IUserService
 	Book       IBookService
-	BookBorrow IBookBorrowHistory
+	BookBorrow IBookBorrowService
 }
 
-func NewService(repo *repository.Manager, conf *config.Config) *Manager {
-	us := NewUserService(repo.User)
-	bs := NewBookService(repo.Book)
-	bbs := NewBookBorrowService(repo.BookBorrow, us, bs)
+func NewService(conf *config.Config, repo *repository.Manager) *Manager {
+	userS := NewUserService(repo.User)
+	bookS := NewBookService(repo.Book)
+	borrS := NewBookBorrowService(repo.BookBorrow, userS, bookS)
 
 	return &Manager{
-		User:       us,
-		Book:       bs,
-		BookBorrow: bbs,
+		User:       userS,
+		Book:       bookS,
+		BookBorrow: borrS,
 	}
 }

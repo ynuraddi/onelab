@@ -1,1 +1,1 @@
-alter table books drop column price;
+alter table books drop column if exists price;
