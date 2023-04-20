@@ -24,7 +24,7 @@ type Config struct {
 	}
 
 	Transaction struct {
-		BaseURL string `env:"TR_URL" env-default:"http://localhost:8081"`
+		BaseURL string `env:"TR_URL" env-default:"http://localhost:8000"`
 	}
 }
 
@@ -35,9 +35,14 @@ var (
 
 func GetConfing() *Config {
 	once.Do(func() {
-		if err := cleanenv.ReadConfig(".env", &config); err != nil {
+		if err := cleanenv.ReadEnv(&config); err != nil {
 			log.Fatalln(err)
 		}
+
+		// if err := cleanenv.ReadConfig(".env", &config); err != nil {
+		// 	log.Fatalln(err)
+		// }
+
 		log.Println("configs readed")
 	})
 

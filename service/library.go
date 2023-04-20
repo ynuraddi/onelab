@@ -45,7 +45,7 @@ func (s *libraryService) BorrowBook(ctx context.Context, record model.LibraryBor
 		return model.LibraryBorrowRp{}, fmt.Errorf(libraryServicePath, err)
 	}
 	rp.TransactionUUID = uuid.UUID
-	rp.Score = uuid.Amount
+	rp.Score = book.Price
 
 	if err := s.borrS.Create(ctx, model.CreateBookBorrowRq{
 		UUID:       uuid.UUID,
@@ -113,7 +113,7 @@ func (s *libraryService) ListDebtors(ctx context.Context) (debtors []*model.Libr
 	return debtors, nil
 }
 
-func (s *libraryService) ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
+func (s *libraryService) ListMetricBorrow(ctx context.Context, month int) (metric []*model.LibraryMetricUserBook, err error) {
 	metric, err = s.borrS.ListMetric(ctx, month)
 	if err != nil {
 		return metric, fmt.Errorf(libraryServicePath, err)
@@ -126,6 +126,38 @@ func (s *libraryService) ListMetric(ctx context.Context, month int) (metric []*m
 		}
 
 		metric[i].UserName = user.Name
+	}
+
+	return metric, nil
+}
+
+func (s *libraryService) ListMetricTransaction(ctx context.Context) (metric []*model.LibraryMetricBookAmount, err error) {
+	debt, err := s.borrS.ListDebtors(ctx)
+	if err != nil {
+		return metric, fmt.Errorf(libraryServicePath, err)
+	}
+
+	mrq := model.MetricTransactionRq{UUID: []string{}}
+
+	for _, d := range debt {
+		mrq.UUID = append(mrq.UUID, d.BorrowUUID)
+	}
+
+	metricTrans, err := s.tranS.MetricBook(ctx, mrq)
+	if err != nil {
+		return metric, fmt.Errorf(libraryServicePath, err)
+	}
+
+	for _, m := range metricTrans {
+		book, err := s.bookS.Get(ctx, m.BookId)
+		if err != nil {
+			return metric, fmt.Errorf(libraryServicePath, err)
+		}
+
+		metric = append(metric, &model.LibraryMetricBookAmount{
+			BookTitle: book.Title,
+			Amount:    m.Amount,
+		})
 	}
 
 	return metric, nil

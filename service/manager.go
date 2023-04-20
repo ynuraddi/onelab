@@ -39,7 +39,7 @@ type IBookBorrowService interface {
 	GetByUserBook(ctx context.Context, userID, bookID int) (model.BookBorrow, error)
 
 	ListDebtors(ctx context.Context) ([]*model.LibraryDebtor, error)
-	ListMetric(ctx context.Context, month int) ([]*model.LibraryMetric, error)
+	ListMetric(ctx context.Context, month int) ([]*model.LibraryMetricUserBook, error)
 }
 
 type ILibraryService interface {
@@ -47,13 +47,15 @@ type ILibraryService interface {
 	ReturnBook(ctx context.Context, record model.LibraryReturnRq) error
 
 	ListDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error)
-	ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error)
+	ListMetricBorrow(ctx context.Context, month int) (metric []*model.LibraryMetricUserBook, err error)
+	ListMetricTransaction(ctx context.Context) (metric []*model.LibraryMetricBookAmount, err error)
 }
 
 type ITransactionService interface {
 	Create(ctx context.Context, tr model.CreateTransactionRq) (model.CreateTransactionRp, error)
 	Pay(ctx context.Context, tr model.PayTransactionRq) error
 	Rollback(ctx context.Context, uuid model.RollbackTransactionRq) error
+	MetricBook(ctx context.Context, mrq model.MetricTransactionRq) (metric []model.MetricTransactionRp, err error)
 }
 
 type Manager struct {

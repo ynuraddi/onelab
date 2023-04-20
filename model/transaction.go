@@ -19,3 +19,12 @@ type PayTransactionRq struct {
 type RollbackTransactionRq struct {
 	UUID string `json:"uuid"`
 }
+
+type MetricTransactionRq struct {
+	UUID []string `json:"uuid"`
+}
+
+type MetricTransactionRp struct {
+	BookId int `json:"book_id"`
+	Amount int `json:"amount"`
+}

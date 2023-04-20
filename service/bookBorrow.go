@@ -99,7 +99,7 @@ func (s *bookBorrowService) ListDebtors(ctx context.Context) (debtors []*model.L
 	return debtors, nil
 }
 
-func (s *bookBorrowService) ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetric, err error) {
+func (s *bookBorrowService) ListMetric(ctx context.Context, month int) (metric []*model.LibraryMetricUserBook, err error) {
 	list, err := s.repo.ListMetric(ctx, month)
 	if err != nil {
 		return metric, fmt.Errorf(bookBorrowServicePath, err)
@@ -132,7 +132,7 @@ func (s *bookBorrowService) ListMetric(ctx context.Context, month int) (metric [
 			books[bookID] = &book
 		}
 
-		metric = append(metric, &model.LibraryMetric{
+		metric = append(metric, &model.LibraryMetricUserBook{
 			UserID:   l.UserID,
 			UserName: l.UserName,
 			Books:    booksTitles,

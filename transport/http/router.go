@@ -31,7 +31,9 @@ func (s *Server) setupRoutes() {
 
 	s.App.POST("/library", s.handler.LibraryBorrow, auth)
 	s.App.PATCH("/library", s.handler.LibraryReturn, auth)
+	s.App.GET("/library/debtors", s.handler.ListBookBorrowDebtor)
+	s.App.GET("/library/metric/book-per-month/:id", s.handler.ListBookBorrowMetric)
+	s.App.GET("/library/metric/book-amount", s.handler.MetricBookTransaction)
 
-	s.App.GET("/library/debtor/list", s.handler.ListBookBorrowDebtor)
-	s.App.GET("/library/metric/list/:id", s.handler.ListBookBorrowMetric)
+	s.App.POST("/transaction", s.handler.PayTransaction)
 }

@@ -14,9 +14,9 @@ import (
 	"app/validator"
 )
 
-//	@title			Onelab API
+//	@title			Onelab API - library
 //	@version		1.0
-//	@description	Onelab project
+//	@description	Onelab project - library
 
 //	@host		localhost:8080
 //	@BasePath	/

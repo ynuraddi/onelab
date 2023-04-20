@@ -82,7 +82,7 @@ func (r *bookBorrowRepository) Delete(ctx context.Context, id int) error {
 
 func (r *bookBorrowRepository) ListDebtors(ctx context.Context) (debtors []*model.LibraryDebtor, err error) {
 	err = r.db.WithContext(ctx).Model(&model.BookBorrow{}).
-		Select("id", "borrow_date", "book_id", "user_id").
+		Select("id", "uuid", "borrow_date", "book_id", "user_id").
 		Where("return_date is null").
 		Find(&debtors).Error
 

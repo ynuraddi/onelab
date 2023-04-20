@@ -111,8 +111,10 @@ definitions:
         type: integer
       user_name:
         type: string
+      uuid:
+        type: string
     type: object
-  model.LibraryMetric:
+  model.LibraryMetricUserBook:
     properties:
       books:
         items:
@@ -134,6 +136,20 @@ definitions:
     required:
     - login
     - password
+    type: object
+  model.MetricTransactionRp:
+    properties:
+      amount:
+        type: integer
+      book_id:
+        type: integer
+    type: object
+  model.PayTransactionRq:
+    properties:
+      amount:
+        type: integer
+      uuid:
+        type: string
     type: object
   model.UpdateBookBorrowRq:
     properties:
@@ -551,7 +567,7 @@ paths:
       summary: LibraryBorrow
       tags:
       - library
-  /library/debtor/list:
+  /library/debtors:
     get:
       consumes:
       - application/json
@@ -580,7 +596,41 @@ paths:
       summary: ListBookBorrowDebtor
       tags:
       - library
-  /library/metric/list/{id}:
+  /library/metric/book-amount:
+    get:
+      consumes:
+      - application/json
+      description: A list of books that clients have now and the total income from
+        each
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.MetricTransactionRp'
+            type: array
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "404":
+          description: record is not exist
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      summary: MetricBookTransaction
+      tags:
+      - metric
+  /library/metric/book-per-month/{id}:
     get:
       consumes:
       - application/json
@@ -598,7 +648,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.LibraryMetric'
+              $ref: '#/definitions/model.LibraryMetricUserBook'
             type: array
         "400":
           description: bad request
@@ -618,7 +668,7 @@ paths:
             $ref: '#/definitions/handler.ErrEnvelope'
       summary: ListBookBorrowMetric
       tags:
-      - library
+      - metric
   /login:
     post:
       consumes:
@@ -653,6 +703,40 @@ paths:
       summary: LoginUser
       tags:
       - user
+  /transaction:
+    post:
+      consumes:
+      - application/json
+      description: You can pay your order here
+      parameters:
+      - description: your transaction and sum amount
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.PayTransactionRq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success transfer
+          schema:
+            $ref: '#/definitions/handler.MsgEnvelope'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "401":
+          description: missing or malformed jwt
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrEnvelope'
+      summary: TransationPay
+      tags:
+      - transaction
   /user:
     post:
       consumes:

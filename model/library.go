@@ -11,8 +11,8 @@ type LibraryBorrowRq struct {
 }
 
 type LibraryBorrowRp struct {
-	TransactionUUID string `json:"transaction_uuid"`
-	Score           int    `json:"score"`
+	TransactionUUID string `json:"uuid"`
+	Score           int    `json:"amount"`
 }
 
 type LibraryReturnRq struct {
@@ -22,6 +22,7 @@ type LibraryReturnRq struct {
 
 type LibraryDebtor struct {
 	BorrowID   int       `json:"borrow_id"   gorm:"column:id"`
+	BorrowUUID string    `json:"uuid"        gorm:"column:uuid"`
 	BorrowDate time.Time `json:"borrow_date" gorm:"column:borrow_date"`
 	UserID     int       `json:"user_id"     gorm:"column:user_id"`
 	UserName   string    `json:"user_name"   gorm:"column:name"`
@@ -35,8 +36,13 @@ type LibraryMetricRepo struct {
 	Books    string `json:"books"          gorm:"column:books"`
 }
 
-type LibraryMetric struct {
+type LibraryMetricUserBook struct {
 	UserID   int      `json:"user_id"        gorm:"column:user_id"`
 	UserName string   `json:"user_name"      gorm:"column:name"`
 	Books    []string `json:"books"          gorm:"column:books"`
+}
+
+type LibraryMetricBookAmount struct {
+	BookTitle string `json:"title"`
+	Amount    int    `json:"amount"`
 }

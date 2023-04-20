@@ -580,7 +580,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/library/debtor/list": {
+        "/library/debtors": {
             "get": {
                 "description": "List library debtor record",
                 "consumes": [
@@ -624,7 +624,57 @@ const docTemplate = `{
                 }
             }
         },
-        "/library/metric/list/{id}": {
+        "/library/metric/book-amount": {
+            "get": {
+                "description": "A list of books that clients have now and the total income from each",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "metric"
+                ],
+                "summary": "MetricBookTransaction",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.MetricTransactionRp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "record is not exist",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/library/metric/book-per-month/{id}": {
             "get": {
                 "description": "List library debtor record",
                 "consumes": [
@@ -634,7 +684,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "library"
+                    "metric"
                 ],
                 "summary": "ListBookBorrowMetric",
                 "parameters": [
@@ -652,7 +702,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.LibraryMetric"
+                                "$ref": "#/definitions/model.LibraryMetricUserBook"
                             }
                         }
                     },
@@ -722,6 +772,58 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction": {
+            "post": {
+                "description": "You can pay your order here",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction"
+                ],
+                "summary": "TransationPay",
+                "parameters": [
+                    {
+                        "description": "your transaction and sum amount",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PayTransactionRq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success transfer",
+                        "schema": {
+                            "$ref": "#/definitions/handler.MsgEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "missing or malformed jwt",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrEnvelope"
                         }
@@ -1144,10 +1246,13 @@ const docTemplate = `{
                 },
                 "user_name": {
                     "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
                 }
             }
         },
-        "model.LibraryMetric": {
+        "model.LibraryMetricUserBook": {
             "type": "object",
             "properties": {
                 "books": {
@@ -1178,6 +1283,28 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 5
+                }
+            }
+        },
+        "model.MetricTransactionRp": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "book_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PayTransactionRq": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
                 }
             }
         },
